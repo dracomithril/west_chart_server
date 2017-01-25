@@ -15,7 +15,9 @@ app.use(express.static(path.resolve(__dirname, '..', 'build')));
 
 // Always return the main index.html, so react-router render the route in the client
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
+    let path2 = path.resolve(__dirname, '..', 'index.html');
+    console.log(path2);
+    res.sendFile(path2);
 });
 app.get('/test',(req,res)=>{
     res.send('hello world!');
