@@ -4,7 +4,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-
+const version = require('../package.json').version;
 const app = express();
 
 // Setup logger
@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
     res.sendFile(path2);
 });
 app.get('/test',(req,res)=>{
-    res.send('hello world! my version is: '+ process.env.npm_package_version);
+    res.send('hello world! my version is: '+ version);
 });
 
 module.exports = app;
