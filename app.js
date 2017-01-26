@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
     res.sendFile(path2);
 });
 app.get('/test',(req,res)=>{
-    res.send('hello world!');
+    res.send('hello world! my version is: '+ process.env.npm_package_version);
 });
 
 module.exports = app;
