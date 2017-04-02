@@ -50,7 +50,7 @@ function obtainList(since, until, groupId, access_token) {
         function reactOnBody(res) {
             if (res.statusCode === 200) {
                 let b = res.body;
-                console.log('in react on body. Grabbed ' + b.data ? b.data.length : 0 + ' elements.');
+                console.log(`in react on body. Grabbed ${ b.data ? b.data.length : 0} elements.`);
                 all_charts.push(...b.data);
                 if (b.paging && b.paging.next) {
                     console.log('get next part of response.');
