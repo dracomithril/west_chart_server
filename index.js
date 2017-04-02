@@ -18,6 +18,7 @@ let count = 0;
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
 console.log(process.env.NODE_ENV);
 console.log(process.env.npm_package_version);
+console.warn('text from heroku: '+process.env.TEST_ENV);
 // Serve static assets
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '..', 'build')));
@@ -30,7 +31,8 @@ app.get('/info', (req, res) => {
         node_env: process.env.NODE_ENV,
         port: process.env.PORT
     });
-    res.send('hello world! my version is: ' + version + ' you are ' + ++count + ' person');
+    console.warn('text from heroku: '+process.env.TEST_ENV);
+    res.send('hello world! my version is: ' + version + ' you are ' + ++count + ' person. text: '+process.env.TEST_ENV);
 });
 app.get('/api/get_chart', (req, res) => {
     let query = req.query;
