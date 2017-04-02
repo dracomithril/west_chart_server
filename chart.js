@@ -11,6 +11,7 @@ let fieldsArr = ['story', 'from', 'link', 'caption', 'icon', 'created_time', 'so
     'attachments', 'full_picture', 'updated_time', 'likes.limit(1).summary(true)', 'reactions.limit(1).summary(true)',
     'comments.limit(50).summary(true){message,from}'];
 let fields = fieldsArr.join(',');
+const timeout = 3000;
 // since=2017-01-15&until=2017-01-16
 /**
  *
@@ -40,22 +41,34 @@ function obtainList(since, until, groupId, access_token) {
             port: 443,
             path: path,
             method: 'GET',
-            timeout: 3000
+            timeout: timeout,
+            simple: true,
+            json: true,
+            resolveWithFullResponse: false
         };
 
         function reactOnBody(res) {
             if (res.statusCode === 200) {
-                let b = JSON.parse(res.body);
+                let b = res.body;
+                console.log('in react on body. Grabbed ' + b.data ? b.data.length : 0 + ' elements.');
                 all_charts.push(...b.data);
                 if (b.paging && b.paging.next) {
-                    request.getAsync(b.paging.next).then(reactOnBody);
+                    console.log('get next part of response.');
+                    return request.getAsync({
+                        url: b.paging.next,
+                        json: true,
+                        method: 'GET',
+                        timeout: timeout
+                    }).then(reactOnBody);
                 } else {
+                    console.log('invoke resolve');
                     resolve(all_charts);
                 }
             }
             else {
                 const error = new Error();
                 error.statusCode = res.statusCode;
+                console.error(`error obtaining chart list. statusCode: ${res.statusCode} body: ${res.body}`);
                 error.sub_error = res.body ? JSON.parse(res.body) : undefined;
                 reject(error)
             }
