@@ -11,7 +11,7 @@ let fieldsArr = ['story', 'from', 'link', 'caption', 'icon', 'created_time', 'so
     'attachments', 'full_picture', 'updated_time', 'likes.limit(1).summary(true)', 'reactions.limit(1).summary(true)',
     'comments.limit(50).summary(true){message,from}'];
 let fields = fieldsArr.join(',');
-const timeout = 3000;
+const timeout = 9000;
 // since=2017-01-15&until=2017-01-16
 /**
  *
@@ -78,7 +78,7 @@ function obtainList(since, until, groupId, access_token) {
     })
 }
 function filterChartAndMap(body) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const map = body.map((elem, id) => {
             let comments = elem.comments.data.filter((elem) => {
                 const search = elem.message.match(/(\[Added)\s(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d]/g);
