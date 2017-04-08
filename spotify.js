@@ -29,14 +29,12 @@ module.exports = function SpotifyHandlers(server) {
     server.get('/api/login', function (req, res) {
         const state = generateRandomString(16);
         res.cookie(stateKey, state);
-
         res.redirect(spotifyApi.createAuthorizeURL(scopes, state));
     });
 
     server.get('/api/callback', function (req, res) {
         const {code, state} = req.query;
         const storedState = req.cookies ? req.cookies[stateKey] : null;
-        console.log('state:',state,'storedState:',storedState);
         // first do state validation
         if (state === null || state !== storedState) {
             console.error('state mismatch')
