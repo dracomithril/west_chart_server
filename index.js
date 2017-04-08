@@ -6,10 +6,14 @@ const morgan = require('morgan');
 const path = require('path');
 const version = require('../package.json').version;
 const app = express();
+const spotify = require('./spotify');
 const chart = require('./chart');
+let cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3001;
 const groupId = '1707149242852457';
 let count = 0;
+
+// use it before all route definitions
 // Setup logger
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
 console.log(process.env.NODE_ENV);
@@ -17,10 +21,28 @@ console.log(process.env.npm_package_version);
 console.warn('text from heroku: ' + process.env.TEST_ENV);
 // Serve static assets
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.resolve(__dirname, '..', 'build')));
+    app.use(express.static(path.resolve(__dirname, '..', 'build')))
 }
-
-
+app.use(cookieParser());
+// app.use(function (req, res, next) {
+//
+//     // Website you wish to allow to connect
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//
+//     // Request methods you wish to allow
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//
+//     // Request headers you wish to allow
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//
+//     // Set to true if you need the website to include cookies in the requests sent
+//     // to the API (e.g. in case you use sessions)
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//
+//     // Pass to next layer of middleware
+//     next();
+// });
+spotify(app);
 app.get('/info', (req, res) => {
     console.log({
         version: process.env.npm_package_version,
