@@ -9,7 +9,7 @@ let request = Promise.promisifyAll(require("request"));
 const clientId = process.env.client_id;
 const clientSecret = process.env.client_secret;
 
-const redirectUri = process.env.redirect_uri || `http://localhost:${process.env.PORT||3001}/api/callback`;
+const redirectUri = process.env.redirect_uri || `http://localhost:${process.env.PORT || 3001}/api/callback`;
 const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-private', 'playlist-modify-public'];
 // configure spotify
 const spotifyApi = new Spotify({
@@ -52,14 +52,17 @@ module.exports = function SpotifyHandlers(server) {
                 spotifyApi.setRefreshToken(refresh_token);
                 // use the access token to access the Spotify Web API
                 spotifyApi.getMe().then(({body}) => {
-                    console.log('spotify user loged: ',body.id);
+                    console.log('spotify user loged: ', body.id);
                 });
                 // we can also pass the token to the browser to make requests from there
-
-                res.redirect(`http://localhost:3000/#/user/${access_token}/${refresh_token}`);
+                let hostname = '';
+                if (process.env.NODE_ENV === 'development') {
+                    hostname = 'http://localhost:3000'
+                }
+                res.redirect(`${hostname}/#/user/${access_token}/${refresh_token}`);
             }).catch(err => {
                 console.log(err);
-                 res.redirect('/#/error/invalid token');
+                res.redirect('/#/error/invalid token');
             });
         }
     });
