@@ -28,8 +28,7 @@ const stateKey = 'spotify_auth_state';
 module.exports = function SpotifyHandlers(server) {
     server.get('/api/login', function (req, res) {
         const state = generateRandomString(16);
-        res.cookie(stateKey, state);
-        res.redirect(spotifyApi.createAuthorizeURL(scopes, state));
+        res.send(spotifyApi.createAuthorizeURL(scopes, state));
     });
 
     server.get('/api/callback', function (req, res) {

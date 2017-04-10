@@ -97,7 +97,7 @@ function filterChartAndMap(body) {
                 addedTime = new Date(year, month, day);
                 addedBy = comments[0].from.name;
             }
-            let attachment = elem.attachments.data.length > 0 ? elem.attachments.data[0] : {};
+            let attachment = ((elem.attachments||{}).data||[]).length > 0 ? elem.attachments.data[0] : {};
 
             const link = {
                 url: elem.link,
