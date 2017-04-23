@@ -52,7 +52,7 @@ function obtainList(since, until, groupId, access_token) {
                 let b = res.body;
                 console.log(`in react on body. Grabbed ${ b.data ? b.data.length : 0} elements.`);
                 all_charts.push(...b.data);
-                if (b.paging && b.paging.next) {
+                if (b.data.length === 100 && b.paging && b.paging.next) {
                     console.log('get next part of response.');
                     return request.getAsync({
                         url: b.paging.next,
@@ -97,7 +97,7 @@ function filterChartAndMap(body) {
                 addedTime = new Date(year, month, day);
                 addedBy = comments[0].from.name;
             }
-            let attachment = ((elem.attachments||{}).data||[]).length > 0 ? elem.attachments.data[0] : {};
+            let attachment = ((elem.attachments || {}).data || []).length > 0 ? elem.attachments.data[0] : {};
 
             const link = {
                 url: elem.link,
