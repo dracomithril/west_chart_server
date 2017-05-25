@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const path = require('path');
 const version = require('../package.json').version;
 const app = express();
+const http = require("http");
 const spotify = require('./spotify');
 const chart = require('./chart');
 let cookieParser = require('cookie-parser');
@@ -51,7 +52,10 @@ app.get('/api/get_chart', (req, res) => {
         res.status(statusCode).send(error)
     });
 });
-
+//keep alive
+setInterval(function() {
+    http.get("http://wcs-dance-chart-admin.herokuapp.com/api/info");
+}, 300000); // every 5 minutes (300000)
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}!`);
 });
