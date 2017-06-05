@@ -4,7 +4,7 @@
 let Promise = require("bluebird");
 const winston = require('winston');
 let request = Promise.promisifyAll(require("request"));
-const api_ver = 'v2.8';
+const api_ver = 'v2.9';
 const limit = 100;
 let days = 7;
 // let EventEmitter = require('events').EventEmitter;
@@ -109,6 +109,7 @@ function filterChartAndMap(body) {
                 added_time: addedTime,
                 added_by: addedBy,
                 created_time: elem.created_time,
+                from:elem.from,
                 from_user: elem.from.name,
                 full_picture: elem.full_picture,
                 id: id,
