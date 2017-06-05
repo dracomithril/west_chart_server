@@ -69,7 +69,7 @@ app.get('/api/get_chart', (req, res) => {
 //keep alive
 setInterval(function() {
     http.get("http://wcs-dance-chart-admin.herokuapp.com/api/info");
-}, 300000); // every 5 minutes (300000)
+}, 280000); // every 5 minutes (300000)
 app.listen(PORT, () => {
     winston.info(`App listening on port ${PORT}!`);
 });
