@@ -2,6 +2,7 @@
  * Created by Gryzli on 24.01.2017.
  */
 let Promise = require("bluebird");
+const winston = require('winston');
 let request = Promise.promisifyAll(require("request"));
 const api_ver = 'v2.8';
 const limit = 100;
@@ -50,10 +51,10 @@ function obtainList(since, until, groupId, access_token) {
         function reactOnBody(res) {
             if (res.statusCode === 200) {
                 let b = res.body;
-                console.log(`in react on body. Grabbed ${ b.data ? b.data.length : 0} elements.`);
+                winston.debug(`in react on body. Grabbed ${ b.data ? b.data.length : 0} elements.`);
                 all_charts.push(...b.data);
                 if (b.data.length === 100 && b.paging && b.paging.next) {
-                    console.log('get next part of response.');
+                    winston.debug('get next part of response.');
                     return request.getAsync({
                         url: b.paging.next,
                         json: true,
@@ -61,14 +62,13 @@ function obtainList(since, until, groupId, access_token) {
                         timeout: timeout
                     }).then(reactOnBody);
                 } else {
-                    console.log('invoke resolve');
                     resolve(all_charts);
                 }
             }
             else {
                 const error = new Error();
                 error.statusCode = res.statusCode;
-                console.error(`error obtaining chart list. statusCode: ${res.statusCode} body: ${res.body}`);
+                winston.error(`error obtaining chart list. statusCode: ${res.statusCode} body: ${res.body}`);
                 error.sub_error = res.body ? JSON.parse(res.body) : undefined;
                 reject(error)
             }
