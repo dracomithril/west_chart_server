@@ -10,7 +10,7 @@ const clientId = process.env.client_id;
 const clientSecret = process.env.client_secret;
 
 const redirectUri = process.env.redirect_uri || `http://localhost:${process.env.PORT || 3001}/api/callback`;
-const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-private', 'playlist-modify-public'];
+const scopes = ['user-read-private', 'user-read-email','user-follow-read','user-library-read', 'playlist-modify-private', 'playlist-modify-public'];
 // configure spotify
 const spotifyApi = new Spotify({
     clientId: clientId,

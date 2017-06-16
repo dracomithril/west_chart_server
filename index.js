@@ -12,6 +12,7 @@ const chart = require('./chart');
 let cookieParser = require('cookie-parser');
 const expressWinston = require("express-winston");
 const PORT = process.env.PORT || 3001;
+//todo move it to environment variables
 const groupId = '1707149242852457';
 let count = 0;
 
