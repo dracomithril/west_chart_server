@@ -41,6 +41,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 app.use(cookieParser());
 
+app.use('/api/fb_policy',express.static(path.resolve(__dirname, '..', 'privacy_policy')));
 spotify(app);
 app.get('/api/info', (req, res) => {
     winston.debug({
