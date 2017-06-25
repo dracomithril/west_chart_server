@@ -57,7 +57,7 @@ module.exports = function SpotifyHandlers(server) {
                     hostname = 'http://localhost:3000'
                 }
                 const query = querystring.stringify({access_token,refresh_token});
-                 res.redirect(`${hostname}/user?${query}`);
+                 res.redirect(`${hostname}/?${query}`);
                 // res.send(query);
             }).catch(err => {
                 winston.error(err);
