@@ -6,7 +6,7 @@ const winston = require('winston');
 let request = require("request-promise-native");
 const clientId = process.env.client_id;
 const clientSecret = process.env.client_secret;
-
+const querystring = require('querystring');
 const redirectUri = process.env.redirect_uri || `http://localhost:${process.env.PORT || 3001}/api/callback`;
 const scopes = ['user-read-private', 'user-read-email','user-follow-read','user-library-read', 'playlist-modify-private', 'playlist-modify-public'];
 // configure spotify
@@ -56,7 +56,9 @@ module.exports = function SpotifyHandlers(server) {
                 if (process.env.NODE_ENV === 'development') {
                     hostname = 'http://localhost:3000'
                 }
-                res.redirect(`${hostname}/#/user/${access_token}/${refresh_token}`);
+                const query = querystring.stringify({access_token,refresh_token});
+                 res.redirect(`${hostname}/login/user?${query}`);
+                // res.send(query);
             }).catch(err => {
                 winston.error(err);
                 res.redirect('/#/error/invalid_token');
@@ -64,7 +66,7 @@ module.exports = function SpotifyHandlers(server) {
         }
     });
 
-    server.get('/refresh_token', function (req, res) {
+    server.get('/api/refresh_token', function (req, res) {
 
         // requesting access token from refresh token
         const refresh_token = req.query.refresh_token;
