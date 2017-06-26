@@ -11,7 +11,6 @@ const http = require("http");
 const spotify = require('./spotify');
 const MongoClient = require('mongodb').MongoClient
     , assert = require('assert');
-const ObjectID = require('mongodb').ObjectID;
 const chart = require('./chart');
 let cookieParser = require('cookie-parser');
 const expressWinston = require("express-winston");
@@ -42,10 +41,6 @@ app.use(expressWinston.logger({
 winston.info(process.env.NODE_ENV);
 winston.info(process.env.npm_package_version);
 winston.warn('text from heroku: ' + process.env.TEST_ENV);
-// Serve static assets
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.resolve(__dirname, '..', 'build')))
-}
 app.use(cookieParser());
 app.use(function (req, res, next) {
     if (process.env.NODE_ENV === 'production') {
@@ -60,6 +55,10 @@ app.use(function (req, res, next) {
         next();
     }
 });
+// Serve static assets
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.resolve(__dirname, '..', 'build')))
+}
 
 app.use('/api/fb_policy', express.static(path.resolve(__dirname, '..', 'privacy_policy')));
 spotify(app);
