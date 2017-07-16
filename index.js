@@ -11,6 +11,7 @@ const spotify = require('./spotify');
 const MongoClient = require('mongodb').MongoClient
     , assert = require('assert');
 const chart = require('./chart');
+const session = require('express-session');
 const blackList = ['/api/info'];
 let cookieParser = require('cookie-parser');
 const expressWinston = require("express-winston");
@@ -24,7 +25,14 @@ winston.info(process.env.npm_package_version);
 winston.warn('text from heroku: ' + process.env.TEST_ENV);
 // use it before all route definitions
 // Setup logger
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {secure: true}
+}));
 app.use(bodyParser.json());
+app.use(cookieParser());
 let ignoreRoute = function (req, res) {
     return blackList.indexOf(req.originalUrl || req.url) !== -1 || req.originalUrl.includes('/static/');
 };
@@ -39,13 +47,12 @@ app.use(expressWinston.logger({
     msg: "HTTP {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
     expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
     colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-    requestWhitelist:['url', 'headers', 'method', 'httpVersion'],
-    bodyBlacklist:["refresh_token","access_token"],
+    requestWhitelist: ['url', 'headers', 'method', 'httpVersion'],
+    bodyBlacklist: ["refresh_token", "access_token"],
     ignoreRoute: ignoreRoute, // optional: allows to skip some log messages based on request and/or response
     skip: ignoreRoute
 }));
 
-app.use(cookieParser());
 app.use(function (req, res, next) {
     if (process.env.NODE_ENV === 'production') {
         if (req.headers['x-forwarded-proto'] !== 'https') {
@@ -63,9 +70,8 @@ app.use(function (req, res, next) {
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, '..', 'build')))
 }
-
-app.use('/api/fb_policy', express.static(path.resolve(__dirname, '..', 'privacy_policy')));
 spotify(app);
+app.use('/api/fb_policy', express.static(path.resolve(__dirname, '..', 'privacy_policy')));
 app.get('/api/info', (req, res) => {
     let newVar = {
         version: process.env.npm_package_version,
