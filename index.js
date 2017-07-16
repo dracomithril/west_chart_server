@@ -8,10 +8,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const http = require("http");
 const spotify = require('./spotify');
-const MongoClient = require('mongodb').MongoClient
-    , assert = require('assert');
+const MongoClient = require('mongodb').MongoClient;
 const chart = require('./chart');
-const session = require('express-session');
 const blackList = ['/api/info'];
 let cookieParser = require('cookie-parser');
 const expressWinston = require("express-winston");
@@ -25,12 +23,7 @@ winston.info(process.env.npm_package_version);
 winston.warn('text from heroku: ' + process.env.TEST_ENV);
 // use it before all route definitions
 // Setup logger
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {secure: true}
-}));
+
 app.use(bodyParser.json());
 app.use(cookieParser());
 let ignoreRoute = function (req, res) {
