@@ -28,9 +28,13 @@ const generateRandomString = N => (Math.random().toString(36) + new Array(N).joi
 
 
 module.exports = function SpotifyHandlers(server) {
-    server.get('/api/login', function (req, res) {
+    server.get('/api/spotify/login_f', function (req, res) {
         const state = generateRandomString(16);
-        res.cookie('spotify_auth_state', state).send(spotifyApi.createAuthorizeURL(scopes, state));
+        res.cookie(cookies_name.stateKey, state).send(spotifyApi.createAuthorizeURL(scopes, state));
+    });
+    server.get('/api/spotify/login_r',function (req, res) {
+        const state = generateRandomString(16);
+        res.cookie(cookies_name.stateKey, state).redirect(spotifyApi.createAuthorizeURL(scopes, state));
     });
 
     server.get('/api/callback', function (req, res) {
