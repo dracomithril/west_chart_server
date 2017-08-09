@@ -26,7 +26,7 @@ winston.warn('text from heroku: ' + process.env.TEST_ENV);
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-let ignoreRoute = function (req, res) {
+let ignoreRoute = function (req/*, res*/) {
     return blackList.indexOf(req.originalUrl || req.url) !== -1 || req.originalUrl.includes('/static/');
 };
 app.use(expressWinston.logger({
@@ -128,7 +128,8 @@ app.get('/api/get_chart', (req, res) => {
     let query = req.query;
     winston.log('in get chart.');
     winston.profile('obtain-chart');
-    chart(31, query.since, query.until, query.access_token, groupId).then((body) => {
+    let days=query.days?Number(query.days):31;
+    chart(days, query.since, query.until, query.access_token, groupId).then((body) => {
         winston.info('returning chart list with: ' + body.chart.length);
         winston.profile('obtain-chart');
         res.status(200).send(body);

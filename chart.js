@@ -12,6 +12,7 @@ let fieldsArr = ['story', 'from', 'link', 'caption', 'icon', 'created_time', 'so
     'comments.limit(50).summary(true){message,from}'];
 let fields = fieldsArr.join(',');
 const timeout = 9000;
+
 // since=2017-01-15&until=2017-01-16
 /**
  *
@@ -54,11 +55,12 @@ function obtainList(since, until, groupId, access_token) {
                 all_charts.push(...body.data);
                 if (body.data.length === limit && body.paging && body.paging.next) {
                     winston.debug('get next part of response.');
-                    return request.getAsync({
+                    return request.get({
                         url: body.paging.next,
                         json: true,
                         method: 'GET',
-                        timeout: timeout
+                        timeout: timeout,
+                        resolveWithFullResponse: true
                     }).then(reactOnBody);
                 } else {
                     resolve(all_charts);
@@ -72,10 +74,12 @@ function obtainList(since, until, groupId, access_token) {
                 reject(error)
             }
         }
+
 //todo modify to use reject errors resolveWithFullResponse: false
         request(options).then(reactOnBody).catch(reject);
     })
 }
+
 function filterChartAndMap(body) {
     return new Promise((resolve) => {
         const map = body.map((elem, id) => {
@@ -108,7 +112,7 @@ function filterChartAndMap(body) {
                 added_time: addedTime,
                 added_by: addedBy,
                 created_time: elem.created_time,
-                from:elem.from,
+                from: elem.from,
                 from_user: elem.from.name,
                 full_picture: elem.full_picture,
                 id: id,
@@ -136,9 +140,7 @@ function filterChartAndMap(body) {
  */
 function UpdateChart(show_days, since, until, access_token, groupId) {
     return new Promise((resolve, reject) => {
-        if (show_days !== undefined) {
-            days = show_days;
-        }
+        days = show_days;
         let a_since, a_until;
         if (!until || !since) {
             let date = new Date();
@@ -161,4 +163,5 @@ function UpdateChart(show_days, since, until, access_token, groupId) {
         }).catch(reject);
     });
 }
+
 module.exports = UpdateChart;
