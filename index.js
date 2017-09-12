@@ -90,38 +90,47 @@ app.put('/api/user/login/:id', (req, res) => {
     } else {
         body._id = process.env.NODE_ENV.substr(0, 4) + '_' + req.params.id;
     }
-    try {
-        MongoClient.connect(process.env.MONGODB_URI).then(db => {
-            database = db;
-            winston.debug("Connected correctly to server");
+
+    if (process.env.MONGODB_URI) {
+        try {
+            MongoClient.connect(process.env.MONGODB_URI).then(db => {
+                database = db;
+                winston.debug("Connected correctly to server");
 
 
-            const collection = db.collection('users');
-            return collection.find({"_id": body._id}).toArray()
-        }).then(docs => {
-            winston.info("Found the following records");
-            winston.debug(docs);
-            const collection = database.collection('users');
-            if (docs.length > 0) {
-                let newBody = Object.assign({}, docs[0], body);
-                newBody.last_login = new Date();
-                newBody.login_count++;
-                return collection.updateOne({"_id": body._id},
-                    {$set: newBody})
-            } else {
-                body.last_login = new Date();
-                body.login_count = 0;
-                return collection.insertOne(body)
-            }
-        }).then(response => {
-            res.status(201).send(response);
-        }).catch(err => {
-            winston.error(err);
-            res.status(500).send(err);
-        });
-    }
-    catch (e) {
-        winston.error(e)
+                const collection = db.collection('users');
+                return collection.find({"_id": body._id}).toArray()
+            }).then(docs => {
+                winston.info("Found the following records");
+                winston.debug(docs);
+                const collection = database.collection('users');
+                if (docs.length > 0) {
+                    let newBody = Object.assign({}, docs[0], body);
+                    newBody.last_login = new Date();
+                    newBody.login_count++;
+                    return collection.updateOne({"_id": body._id},
+                        {$set: newBody})
+                } else {
+                    body.last_login = new Date();
+                    body.login_count = 0;
+                    return collection.insertOne(body)
+                }
+            }).then(response => {
+                res.status(201).send(response);
+            }).catch(err => {
+                winston.error(err);
+                try {
+                    res.status(500).send(err);
+                } catch (e) {
+                    winston.error(e)
+                }
+            });
+        }
+        catch (e) {
+            winston.error(e)
+        }
+    }else {
+        winston.warn("no MONGODB_URI")
     }
 });
 app.get('/api/get_chart', (req, res) => {
