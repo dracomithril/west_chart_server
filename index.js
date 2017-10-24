@@ -2,22 +2,25 @@
  * Created by Gryzli on 24.01.2017.
  */
 const express = require('express');
+const router = express.Router();
 const winston = require('winston');
 const path = require('path');
 const app = express();
+let ejs = require('ejs');
 const bodyParser = require('body-parser');
 const http = require("http");
-const spotify = require('./spotify');
+const spotify = require('./spotify_router');
+const fb_router = require('./fb_ruter');
 const MongoClient = require('mongodb').MongoClient;
-const chart = require('./chart');
 const blackList = ['/api/info'];
 let cookieParser = require('cookie-parser');
 const expressWinston = require("express-winston");
 const PORT = process.env.PORT || 3001;
 //todo move it to environment variables
-const groupId = '1707149242852457';
 let count = 0;
 
+app.engine('html', ejs.renderFile);
+app.set('view engine', 'html');
 winston.info(process.env.NODE_ENV);
 winston.info(process.env.npm_package_version);
 winston.warn('text from heroku: ' + process.env.TEST_ENV);
@@ -29,6 +32,7 @@ app.use(cookieParser());
 let ignoreRoute = function (req/*, res*/) {
     return blackList.indexOf(req.originalUrl || req.url) !== -1 || req.originalUrl.includes('/static/');
 };
+
 app.use(expressWinston.logger({
     transports: [
         new winston.transports.Console({
@@ -61,11 +65,15 @@ app.use(function (req, res, next) {
 });
 // Serve static assets
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.resolve(__dirname, '..', 'build')))
+    app.use(express.static(path.resolve(__dirname, '..', 'build')));
+    setInterval(function () {
+        http.get("https://wcs-dance-chart-admin.herokuapp.com/api/info");
+    }, 280000); // every 5 minutes (300000)
 }
-spotify(app);
-app.use('/api/fb_policy', express.static(path.resolve(__dirname, '..', 'privacy_policy')));
-app.get('/api/info', (req, res) => {
+
+
+app.use('/404',express.static(path.resolve(__dirname, '..', 'not_found')));
+router.get('/info', (req, res) => {
     let newVar = {
         version: process.env.npm_package_version,
         node_env: process.env.NODE_ENV,
@@ -76,10 +84,11 @@ app.get('/api/info', (req, res) => {
     res.send(`hello world! my version is: ${newVar.version} you are ${++count} person. text: ${process.env.TEST_ENV} ${JSON.stringify(newVar)}`);
     res.end();
 });
-app.put('/api/log_errors', (req, res) => {
-
+router.put('/log_errors', (req, res) => {
+ winston.warn('Error was logged but seving logs is still not implemented so we implement that in logs');
+ winston.error(req.body);
 });
-app.put('/api/user/login/:id', (req, res) => {
+router.put('/user/login/:id', (req, res) => {
 
 // Connection URL
 // Use connect method to connect to the Server
@@ -129,31 +138,31 @@ app.put('/api/user/login/:id', (req, res) => {
         catch (e) {
             winston.error(e)
         }
-    }else {
+    } else {
         winston.warn("no MONGODB_URI")
     }
 });
-app.get('/api/get_chart', (req, res) => {
-    let query = req.query;
-    winston.log('in get chart.');
-    winston.profile('obtain-chart');
-    let days=query.days?Number(query.days):31;
-    chart(days, query.since, query.until, query.access_token, groupId).then((body) => {
-        winston.info('returning chart list with: ' + body.chart.length);
-        winston.profile('obtain-chart');
-        res.status(200).send(body);
-    }).catch((err) => {
-        winston.error('error on /api/get_chart');
-        winston.error(err);
-        let statusCode = err.statusCode || 400;
-        const error = err.sub_error || 'Sorry we don\'t know what happened :( ';
-        res.status(statusCode).send(error)
-    });
-});
+
+app.use('/api', router);
+app.use('/api/fb',fb_router());
+app.use('/api/spotify', spotify());
 //keep alive
-setInterval(function () {
-    http.get("http://wcs-dance-chart-admin.herokuapp.com/api/info");
-}, 280000); // every 5 minutes (300000)
+app.use(function errorHandler (req, res, next) {
+     res.status(404);
+    if (req.accepts('html')) {
+        res.render('not_found', { url: '/404' });
+        return;
+    }
+
+    // respond with json
+    if (req.accepts('json')) {
+        res.send({ error: 'Not found' });
+        return;
+    }
+
+    // default to plain-text. send()
+    res.type('txt').send('Not found');
+});
 app.listen(PORT, () => {
     winston.info(`App listening on port ${PORT}!`);
 });
