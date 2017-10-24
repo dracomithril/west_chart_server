@@ -115,7 +115,7 @@ function filterChartAndMap(body) {
                 from: elem.from,
                 from_user: elem.from.name,
                 full_picture: elem.full_picture,
-                id: id,
+                id: elem.id,
                 likes_num: elem.likes.summary.total_count,
                 link: link,
                 message: elem.message,
