@@ -2,11 +2,13 @@
  * Created by Gryzli on 24.01.2017.
  */
 const express = require('express');
+const favicon = require('serve-favicon');
+const serveStatic = require('serve-static');
 const router = express.Router();
 const winston = require('winston');
 const path = require('path');
 const app = express();
-let ejs = require('ejs');
+const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const http = require("http");
 const spotify = require('./spotify_router');
@@ -19,6 +21,9 @@ const PORT = process.env.PORT || 3001;
 //todo move it to environment variables
 let count = 0;
 
+app.use(serveStatic(path.join(__dirname,'..','public')));
+app.use(favicon(path.join(__dirname,'..', 'public', 'favicon.ico')));
+app.set('views',path.join(__dirname,'..','public'));
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 winston.info(process.env.NODE_ENV);
@@ -26,9 +31,9 @@ winston.info(process.env.npm_package_version);
 winston.warn('text from heroku: ' + process.env.TEST_ENV);
 // use it before all route definitions
 // Setup logger
-
 app.use(bodyParser.json());
 app.use(cookieParser());
+
 let ignoreRoute = function (req/*, res*/) {
     return blackList.indexOf(req.originalUrl || req.url) !== -1 || req.originalUrl.includes('/static/');
 };
@@ -41,7 +46,7 @@ app.use(expressWinston.logger({
         })
     ],
     meta: false, // optional: control whether you want to log the meta data about the request (default to true)
-    msg: "HTTP {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+    msg: "HTTP {{req.method}} {{res.statusCode}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
     expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
     colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
     requestWhitelist: ['url', 'headers', 'method', 'httpVersion'],
@@ -72,8 +77,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-app.use('/404',express.static(path.resolve(__dirname, '..', 'not_found')));
+app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
 router.get('/info', (req, res) => {
+
     let newVar = {
         version: process.env.npm_package_version,
         node_env: process.env.NODE_ENV,
@@ -85,8 +91,8 @@ router.get('/info', (req, res) => {
     res.end();
 });
 router.put('/log_errors', (req, res) => {
- winston.warn('Error was logged but seving logs is still not implemented so we implement that in logs');
- winston.error(req.body);
+    winston.warn('Error was logged but seving logs is still not implemented so we implement that in logs');
+    winston.error(req.body);
 });
 router.put('/user/login/:id', (req, res) => {
 
@@ -144,19 +150,19 @@ router.put('/user/login/:id', (req, res) => {
 });
 
 app.use('/api', router);
-app.use('/api/fb',fb_router());
+app.use('/api/fb', fb_router());
 app.use('/api/spotify', spotify());
 //keep alive
-app.use(function errorHandler (req, res, next) {
-     res.status(404);
+app.use(function errorHandler(req, res, next) {
+    res.status(404);
     if (req.accepts('html')) {
-        res.render('not_found', { url: '/404' });
+        res.render('not_found');
         return;
     }
 
     // respond with json
     if (req.accepts('json')) {
-        res.send({ error: 'Not found' });
+        res.send({error: 'Not found'});
         return;
     }
 

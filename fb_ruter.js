@@ -4,12 +4,13 @@
 let express = require('express');
 const router = express.Router();
 const winston = require('winston');
-const path = require('path');
 const chart = require('./chart');
 const groupId = '1707149242852457';
 
 
-router.use('/policy', express.static(path.resolve(__dirname, '..', 'privacy_policy')));
+router.use('/policy', function (req, res) {
+    res.render('privacy_policy')
+});
 router.get('/get_chart', (req, res) => {
     let query = req.query;
     winston.log('in get chart.');
