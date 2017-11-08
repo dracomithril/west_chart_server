@@ -76,7 +76,7 @@ if (process.env.NODE_ENV === 'production') {
     }, 280000); // every 5 minutes (300000)
 }
 
-
+//todo don't log api/info
 app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
 router.get('/info', (req, res) => {
 

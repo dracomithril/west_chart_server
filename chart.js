@@ -153,7 +153,8 @@ function UpdateChart(show_days, since, until, access_token, groupId) {
             a_since = since;
             a_until = until
         }
-        obtainList(a_since, a_until, groupId, access_token).then(filterChartAndMap).then((body) => {
+        obtainList(a_since, a_until, groupId, access_token)
+            .then(filterChartAndMap).then((body) => {
             let until = new Date().toISOString();
             let cache = {
                 chart: body,
