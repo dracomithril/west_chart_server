@@ -10,7 +10,7 @@ const path = require('path');
 const app = express();
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
-const http = require("http");
+const https = require("https");
 const spotify = require('./spotify_router');
 const fb_router = require('./fb_ruter');
 const MongoClient = require('mongodb').MongoClient;
@@ -58,21 +58,16 @@ app.use(expressWinston.logger({
 app.use(function (req, res, next) {
     if (process.env.NODE_ENV === 'production') {
         if (req.headers['x-forwarded-proto'] !== 'https') {
-            res.redirect(301, 'https://' + req.hostname + req.originalUrl);
-        }
-        else {
-            next();
+           return res.redirect(301, 'https://' + req.hostname + req.originalUrl);
         }
     }
-    else {
-        next();
-    }
+    return next();
 });
-// Serve static assets
 if (process.env.NODE_ENV === 'production') {
+// Serve static assets
     app.use(express.static(path.resolve(__dirname, '..', 'build')));
     setInterval(function () {
-        http.get("https://wcs-dance-chart-admin.herokuapp.com/api/info");
+        https.get("https://wcs-dance-chart-admin.herokuapp.com/api/info");
     }, 280000); // every 5 minutes (300000)
 }
 
