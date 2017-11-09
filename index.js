@@ -21,14 +21,23 @@ const PORT = process.env.PORT || 3001;
 //todo move it to environment variables
 let count = 0;
 
+
+
+winston.info(process.env.NODE_ENV);
+winston.info(process.env.npm_package_version);
+winston.warn('text from heroku: ' + process.env.TEST_ENV);
+if (process.env.NODE_ENV === 'production') {
+// Serve static assets
+    app.use(serveStatic(path.resolve(__dirname, '..', 'build')));
+    setInterval(function () {
+        https.get("https://wcs-dance-chart-admin.herokuapp.com/api/info");
+    }, 280000); // every 5 minutes (300000)
+}
 app.use(serveStatic(path.join(__dirname,'..','public')));
 app.use(favicon(path.join(__dirname,'..', 'public', 'favicon.ico')));
 app.set('views',path.join(__dirname,'..','public'));
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
-winston.info(process.env.NODE_ENV);
-winston.info(process.env.npm_package_version);
-winston.warn('text from heroku: ' + process.env.TEST_ENV);
 // use it before all route definitions
 // Setup logger
 app.use(bodyParser.json());
@@ -63,13 +72,7 @@ app.use(function (req, res, next) {
     }
     return next();
 });
-if (process.env.NODE_ENV === 'production') {
-// Serve static assets
-    app.use(express.static(path.resolve(__dirname, '..', 'build')));
-    setInterval(function () {
-        https.get("https://wcs-dance-chart-admin.herokuapp.com/api/info");
-    }, 280000); // every 5 minutes (300000)
-}
+
 
 //todo don't log api/info
 app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
@@ -88,6 +91,7 @@ router.get('/info', (req, res) => {
 router.put('/log_errors', (req, res) => {
     winston.warn('Error was logged but seving logs is still not implemented so we implement that in logs');
     winston.error(req.body);
+    res.status(200).send();
 });
 router.put('/user/login/:id', (req, res) => {
 
