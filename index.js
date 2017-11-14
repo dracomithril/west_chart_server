@@ -27,15 +27,15 @@ winston.info(process.env.NODE_ENV);
 winston.info(process.env.npm_package_version);
 winston.warn('text from heroku: ' + process.env.TEST_ENV);
 
+if (process.env.NODE_ENV === 'production') {
+// Serve static assets
     app.use(function redirectHttp(req, res, next) {
-        if (!req.secure) {
+        if (req.headers['x-forwarded-proto'] !== 'https') {
             winston.info('redirected from http. secure: '+req.secure.toString());
             return res.redirect('https://' + req.get('host') + req.url);
         }
         next();
     });
-if (process.env.NODE_ENV === 'production') {
-// Serve static assets
     app.use(serveStatic(path.resolve(__dirname, '..', 'build')));
     setInterval(function keepAlive() {
         https.get("https://wcs-dance-chart-admin.herokuapp.com/api/info");
