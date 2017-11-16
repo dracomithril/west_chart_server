@@ -7,9 +7,9 @@ const api_ver = 'v2.9';
 const limit = 100;
 let days = 7;
 // let EventEmitter = require('events').EventEmitter;
-let fieldsArr = ['story', 'from', 'link', 'caption', 'icon', 'created_time', 'source', 'name', 'type', 'message',
-    'attachments', 'full_picture', 'updated_time', 'likes.limit(1).summary(true)', 'reactions.limit(1).summary(true)',
-    'comments.limit(50).summary(true){message,from}'];
+let fieldsArr = ['story', 'from{first_name,last_name,name,id}', 'link', 'caption', 'icon', 'created_time',
+    'source', 'name', 'type', 'message', 'attachments', 'full_picture', 'updated_time',
+    'likes.limit(1).summary(true)', 'reactions.limit(1).summary(true)', 'comments.limit(50).summary(true){message,from}'];
 let fields = fieldsArr.join(',');
 const timeout = 9000;
 
@@ -82,7 +82,7 @@ function obtainList(since, until, groupId, access_token) {
 
 function filterChartAndMap(body) {
     return new Promise((resolve) => {
-        const map = body.map((elem, id) => {
+        const map = body.map((elem) => {
             let comments = elem.comments.data.filter((elem) => {
                 const search = elem.message.match(/(\[Added)\s(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d]/g);
                 return (search !== null)
@@ -146,8 +146,8 @@ function UpdateChart(show_days, since, until, access_token, groupId) {
             let date = new Date();
             let since_date = new Date();
             since_date.setDate(date.getDate() - days);
-            a_until = date.toISOString();
-            a_since = since_date.toISOString();
+            a_until = Math.round(date.getTime()/1000.0);
+            a_since =Math.round(since_date.getTime()/1000.0);
 
         } else {
             a_since = since;
