@@ -16,7 +16,7 @@ const spotify = require('./spotify_router');
 const fb_router = require('./fb_ruter');
 const MongoClient = require('mongodb').MongoClient;
 const blackList = ['/api/info'];
-let cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const expressWinston = require("express-winston");
 const PORT = process.env.PORT || 3001;
 //todo move it to environment variables
@@ -131,11 +131,11 @@ router.put('/user/login/:id', function logUserId(req, res){
             }).then(response => {
                 res.status(201).send(response);
             }).catch(err => {
-                winston.error(err);
+                winston.error(err.message);
                 try {
                     res.status(500).send(err);
                 } catch (e) {
-                    winston.error(e)
+                    winston.error(e.message)
                 }
             });
         }
