@@ -4,46 +4,61 @@
 const Spotify = require('spotify-web-api-node');
 const router = require('express').Router();
 const winston = require('winston');
-let request = require("request-promise-native");
+
 const clientId = process.env.client_id;
 const clientSecret = process.env.client_secret;
-const redirectUri = process.env.redirect_uri || `http://localhost:${process.env.PORT || 3001}/api/spotify/callback`;
-const scopes = ['user-read-private', 'user-read-email', 'user-follow-read', 'user-library-read', 'playlist-modify-private', 'playlist-modify-public'];
+const redirectUri =
+  process.env.redirect_uri || `http://localhost:${process.env.PORT || 3001}/api/spotify/callback`;
+const scopes = [
+  'user-read-private',
+  'user-read-email',
+  'user-follow-read',
+  'user-library-read',
+  'playlist-modify-private',
+  'playlist-modify-public',
+];
 // configure spotify
-const spotifyApi = new Spotify({
-  clientId: clientId,
-  clientSecret: clientSecret,
-  redirectUri: redirectUri
-});
+const credentials = {
+  clientId,
+  clientSecret,
+  redirectUri,
+};
+
 const cookies_name = {
   access_token: 'wcs_sp_user_ac',
   refresh_token: 'wcs_sp_user_refresh_token',
-  stateKey: 'spotify_auth_state'
+  stateKey: 'spotify_auth_state',
 };
 Object.freeze(cookies_name);
 winston.debug(redirectUri);
 
 /** Generates a random string containing numbers and letters of N characters */
-const generateRandomString = N => (Math.random().toString(36) + new Array(N).join('0')).slice(2, N + 2);
-
+const generateRandomString = N =>
+  (Math.random().toString(36) + new Array(N).join('0')).slice(2, N + 2);
 
 /**
  * Returns spotify router
  * @returns {*}
  */
 module.exports = function SpotifyHandlers() {
-  router.get('/login_f', function(req, res) {
+  router.get('/login_f', (req, res) => {
     const state = generateRandomString(16);
-    res.cookie(cookies_name.stateKey, state).send(spotifyApi.createAuthorizeURL(scopes, state));
+    const spotifyApi = new Spotify(credentials);
+    const body = spotifyApi.createAuthorizeURL(scopes, state);
+    winston.info(body);
+    res.cookie(cookies_name.stateKey, state);
+    res.status(200).send({ url: body });
   });
-  router.get('/login_r', function(req, res) {
+  router.get('/login_r', (req, res) => {
     const state = generateRandomString(16);
-    res.cookie(cookies_name.stateKey, state).redirect(spotifyApi.createAuthorizeURL(scopes, state));
+    const spotifyApi = new Spotify(credentials);
+    res.cookie(cookies_name.stateKey, state);
+    res.redirect(spotifyApi.createAuthorizeURL(scopes, state));
   });
 
-  router.get('/callback', function(req, res) {
-    const { code, state } = req.query;
-    const storedState = req.cookies ? req.cookies[cookies_name.stateKey] : null;
+  router.get('/callback', ({ query, cookies }, res) => {
+    const { code, state } = query;
+    const storedState = cookies ? cookies[cookies_name.stateKey] : null;
     // first do state validation
     if (state === null || state !== storedState) {
       winston.error('state mismatch');
@@ -51,43 +66,43 @@ module.exports = function SpotifyHandlers() {
       // if the state is valid, get the authorization code and pass it on to the client
     } else {
       res.clearCookie(cookies_name.stateKey);
+      const spotifyApi = new Spotify(credentials);
       // Retrieve an access token and a refresh token
-      spotifyApi.authorizationCodeGrant(code).then(data => {
-        const { expires_in, access_token, refresh_token } = data.body;
-        winston.info('The access token expires in ' + expires_in);
-        res.cookie(cookies_name.access_token, access_token, {
-          maxAge: 3600000
+      spotifyApi
+        .authorizationCodeGrant(code)
+        .then(({ body }) => {
+          const { expires_in, access_token, refresh_token } = body;
+          winston.info(`The access token expires in ${expires_in}`);
+          res.cookie(cookies_name.access_token, access_token, {
+            maxAge: expires_in * 1000,
+          });
+          res.cookie(cookies_name.refresh_token, refresh_token);
+          res.redirect('/');
+        })
+        .catch(err => {
+          winston.error(err);
+          res.redirect('/#/error/invalid_token');
         });
-        res.cookie(cookies_name.refresh_token, refresh_token).sendFile(__dirname + '/close.html');
-      }).catch(err => {
-        winston.error(err);
-        res.redirect('/#/error/invalid_token');
-      });
     }
   });
 
-  router.get('/refresh_token', function(req, res) {
-
-    // requesting access token from refresh token
-    const refresh_token = req.query.refresh_token;
-    const authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
-      headers: { 'Authorization': 'Basic ' + (new Buffer(clientId + ':' + clientSecret).toString('base64')) },
-      form: {
-        grant_type: 'refresh_token',
-        refresh_token: refresh_token
-      },
-      json: true
-    };
-
-    request.post(authOptions, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        const access_token = body.access_token;
-        res.send({
-          'access_token': access_token
+  router.post('/refresh_token', ({ body: { refresh_token } }, res) => {
+    const spotifyApi = new Spotify(credentials);
+    spotifyApi.setRefreshToken(refresh_token);
+    spotifyApi
+      .refreshAccessToken()
+      .then(({ body }) => {
+        winston.info('The access token has been refreshed!');
+        const { access_token, expires_in } = body;
+        res.cookie(cookies_name.access_token, access_token, {
+          maxAge: expires_in * 1000,
         });
-      }
-    });
+        res.send(access_token);
+      })
+      .catch(err => {
+        winston.error('Could not refresh access token', err);
+        res.status(500).send(err);
+      });
   });
   return router;
 };
