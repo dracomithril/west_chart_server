@@ -1,26 +1,23 @@
 /**
  * Created by Gryzli on 24.01.2017.
  */
-const express = require('express');
-const compression = require('compression');
-const favicon = require('serve-favicon');
-const serveStatic = require('serve-static');
-
-const router = express.Router();
-const winston = require('winston');
-const path = require('path');
-
-const app = express();
-const ejs = require('ejs');
 const bodyParser = require('body-parser');
-const https = require('https');
+const compression = require('compression');
+const cookieParser = require('cookie-parser');
+const ejs = require('ejs');
+const express = require('express');
+const expressWinston = require('express-winston');
+const { MongoClient } = require('mongodb');
+const path = require('path');
+const serveStatic = require('serve-static');
+const winston = require('winston');
 const spotify = require('./spotify_router');
 const fb_router = require('./fb_ruter');
-const { MongoClient } = require('mongodb');
+
+const app = express();
+const router = express.Router();
 
 const blackList = ['/api/info'];
-const cookieParser = require('cookie-parser');
-const expressWinston = require('express-winston');
 
 const PORT = process.env.PORT || 3001;
 // todo move it to environment variables
@@ -29,27 +26,9 @@ let count = 0;
 winston.info(process.env.NODE_ENV);
 winston.info(process.env.npm_package_version);
 winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
-app.use(compression());
-if (process.env.NODE_ENV === 'production') {
-  // Serve static assets
-  app.use((req, res, next) => {
-    if (req.headers['x-forwarded-proto'] !== 'https') {
-      winston.info(`redirected from http. secure: ${req.secure.toString()}`);
-      res.redirect(`https://${req.get('host')}${req.url}`);
-    } else next();
-  });
-  app.use(serveStatic(path.resolve(__dirname, '..', 'build')));
-  setInterval(() => {
-    https.get('https://wcs-dance-chart-admin.herokuapp.com/api/info');
-  }, 280000); // every 5 minutes (300000)
-}
-app.use(serveStatic(path.join(__dirname, '..', 'public')));
-app.use(favicon(path.join(__dirname, '..', 'public', 'favicon.ico')));
-app.set('views', path.join(__dirname, '..', 'public'));
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
-// use it before all route definitions
-// Setup logger
+app.use(compression());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -74,7 +53,20 @@ app.use(
     skip: ignoreRoute,
   }),
 );
-
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.SKIP_HTTPS_REDIRECT) {
+    // Serve static assets
+    app.use((req, res, next) => {
+      if (req.headers['x-forwarded-proto'] !== 'https') {
+        winston.info(`redirected from http. secure: ${req.secure.toString()}`);
+        res.redirect(`https://${req.get('host')}${req.url}`);
+      } else next();
+    });
+  }
+  // setInterval(() => {
+  //   https.get('https://wcs-dance-chart-admin.herokuapp.com/api/info');
+  // }, 280000); // every 5 minutes (300000)
+}
 // todo don't log api/info
 app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
 router.get('/info', (req, res) => {
@@ -171,6 +163,9 @@ app.use((req, res) => {
   // default to plain-text. send()
   res.type('txt').send('Not found');
 });
+if (process.env.NODE_ENV === 'production') {
+  app.use('/*', serveStatic(path.resolve(__dirname, '..', 'build')));
+}
 app.listen(PORT, () => {
   winston.info(`App listening on port ${PORT}!`);
 });

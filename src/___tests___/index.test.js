@@ -23,10 +23,10 @@ describe('[server]', function () {
     let express = require('express');
     express.mockImplementation(() => expressMock);
     express.Router.mockImplementation(() => router);
-    require('./../../server');
+    require('../index');
 
     sinon.assert.calledOnce(expressMock.listen);
     sinon.assert.callCount(expressMock.get, 0);
-    sinon.assert.callCount(expressMock.use, 11);
+    sinon.assert.callCount(expressMock.use, 9);
   });
 });

@@ -1,0 +1,62 @@
+{
+  "name": "west_chart_server",
+  "version": "1.0.0",
+  "description": "server api side of application",
+  "main": "src/index.js",
+  "scripts": {
+    "start:srv": "node scripts/start_srv.js",
+    "test": "node scripts/test.js --env=jsdom"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dracomithril/WestChart_ReactApp.git"
+  },
+  "dependencies": {
+    "body-parser": "1.18.2",
+    "compression": "^1.7.1",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "express-winston": "^2.4.0",
+    "mongodb": "^3.0.2",
+    "request": "^2.83.0",
+    "request-promise-native": "1.0.5",
+    "serve-favicon": "2.4.5",
+    "serve-static": "1.13.1",
+    "spotify-web-api-node": "2.5.0",
+    "winston": "^2.4.0"
+  },
+  "devDependencies": {
+    "babel-core": "6.26.0",
+    "babel-eslint": "7.2.3",
+    "babel-jest": "22.1.0",
+    "babel-loader": "7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "jest": "22.1.4",
+    "jest-cli": "22.1.4",
+    "dotenv": "5.0.0",
+    "dotenv-expand": "^4.0.1",
+    "prettier": "^1.10.2",
+    "eslint": "4.17.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-loader": "1.9.0",
+    "eslint-plugin-flowtype": "2.42.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-json": "^1.2.0",
+    "eslint-plugin-jsx-a11y": "5.1.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "sinon": "^4.2.2"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dracomithril/WestChart_ReactApp/issues"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "homepage": "https://github.com/dracomithril/WestChart_ReactApp#readme"
+}
