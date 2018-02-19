@@ -1,0 +1,62 @@
+{
+  "extends": ["airbnb", "prettier", "prettier/react", "react-app"],
+  "parser": "babel-eslint",
+  "plugins": ["prettier","json", "import"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "complexity": [
+      "warn",
+      10
+    ],
+    "camelcase": "off",
+    "no-useless-escape": "off",
+    "function-paren-newline": "off",
+    "indent": ["error", 2, {"SwitchCase": 1}],
+    "new-cap": "error",
+    "no-use-before-define": "off",
+    "no-console": ["warn", {
+        "allow": ["info", "warn", "error"]
+    }],
+    "no-plusplus": "off",
+    "no-param-reassign": "off",
+    "no-restricted-syntax": [
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ],
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "_id",
+          "_doc"
+        ]
+      }
+    ],
+    "object-curly-newline": "off",
+    "react/jsx-filename-extension": "off",
+    "react/require-default-props": "off",
+    "react/forbid-prop-types": "off",
+    "react/no-array-index-key": "warn",
+    "import/no-extraneous-dependencies": ["error", {
+      "devDependencies": ["config/*"]
+    }],
+    "import/prefer-default-export": "warn",
+    "jsx-a11y/no-noninteractive-tabindex": "warn",
+    "jsx-a11y/media-has-caption": "off",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-noninteractive-element-interactions": "warn"
+  },
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LogedIn</title>
+</head>
+<body>
+<span>Logged</span>
+<script>
+    if (window.opener) {
+        // window.opener.location.reload();
+        window.close();
+        console.log(window.opener ? 'something' : 'nothing');
+
+    }
+    else{
+        console.log('something wrong')
+    }
+</script>
+</body>
+</html>
