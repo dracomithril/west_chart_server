@@ -8,10 +8,6 @@
     "start": "node src/index.js",
     "test": "node scripts/test.js --env=jsdom"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/dracomithril/WestChart_ReactApp.git"
-  },
   "dependencies": {
     "body-parser": "1.18.2",
     "compression": "^1.7.1",
@@ -49,15 +45,19 @@
     "eslint-plugin-prettier": "^2.6.0",
     "sinon": "^4.2.2"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dracomithril/WestChart_ReactApp/issues"
-  },
+  "author": "dracomithril",
+  "license": "MIT",
   "babel": {
     "presets": [
       "es2015"
     ]
   },
-  "homepage": "https://github.com/dracomithril/WestChart_ReactApp#readme"
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dracomithril/west_chart_server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dracomithril/west_chart_server/issues"
+  },
+  "homepage": "https://github.com/dracomithril/west_chart_server#readme"
 }
