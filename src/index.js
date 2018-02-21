@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const ejs = require('ejs');
+const { version } = require('./../package');
 const express = require('express');
 const expressWinston = require('express-winston');
 const { MongoClient } = require('mongodb');
@@ -24,7 +25,7 @@ const PORT = process.env.PORT || 3001;
 let count = 0;
 
 winston.info(process.env.NODE_ENV);
-winston.info(process.env.npm_package_version);
+winston.info(version);
 winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
 app.use(serveStatic(path.join(__dirname, '..', 'public')));
 app.set('views', path.join(__dirname, '..', 'public'));
@@ -73,7 +74,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
 router.get('/info', (req, res) => {
   const newVar = {
-    version: process.env.npm_package_version,
+    version,
     node_env: process.env.NODE_ENV,
     port: process.env.PORT,
   };
