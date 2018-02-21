@@ -26,6 +26,8 @@ let count = 0;
 winston.info(process.env.NODE_ENV);
 winston.info(process.env.npm_package_version);
 winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
+app.use(serveStatic(path.join(__dirname, '..', 'public')));
+app.set('views', path.join(__dirname, '..', 'public'));
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 app.use(compression());
