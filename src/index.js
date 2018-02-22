@@ -14,17 +14,18 @@ const serveStatic = require('serve-static');
 const winston = require('winston');
 const spotify = require('./spotify_router');
 const fb_router = require('./fb_ruter');
+const config = require('./config');
 
 const app = express();
 const router = express.Router();
 
 const blackList = ['/api/info'];
 
-const PORT = process.env.PORT || 3001;
+// TODO add JWT validation
 // todo move it to environment variables
 let count = 0;
 
-winston.info(process.env.NODE_ENV);
+winston.info('NODE_ENV:', process.env.NODE_ENV);
 winston.info(version);
 winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
 app.use(serveStatic(path.join(__dirname, '..', 'public')));
@@ -56,8 +57,8 @@ app.use(
     skip: ignoreRoute,
   }),
 );
-if (process.env.NODE_ENV === 'production') {
-  if (!process.env.SKIP_HTTPS_REDIRECT) {
+if (config.isProduction) {
+  if (!config.skipHttpRedirect) {
     // Serve static assets
     app.use((req, res, next) => {
       if (req.headers['x-forwarded-proto'] !== 'https') {
@@ -73,17 +74,17 @@ if (process.env.NODE_ENV === 'production') {
 // todo don't log api/info
 app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
 router.get('/info', (req, res) => {
-  const newVar = {
+  const serverInfo = {
     version,
     node_env: process.env.NODE_ENV,
-    port: process.env.PORT,
+    port: config.port,
   };
-  winston.debug(newVar);
+  winston.debug(serverInfo);
   winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
   res.send(
-    `hello world! my version is: ${newVar.version} you are ${++count} person. text: ${
+    `hello world! my version is: ${serverInfo.version} you are ${++count} person. text: ${
       process.env.TEST_ENV
-    } ${JSON.stringify(newVar)}`,
+    } ${JSON.stringify(serverInfo)}`,
   );
   res.end();
 });
@@ -166,9 +167,9 @@ app.use((req, res) => {
   // default to plain-text. send()
   res.type('txt').send('Not found');
 });
-if (process.env.NODE_ENV === 'production') {
+if (config.isProduction) {
   app.use('/*', serveStatic(path.resolve(__dirname, '..', 'build')));
 }
-app.listen(PORT, () => {
-  winston.info(`App listening on port ${PORT}!`);
+app.listen(config.port, () => {
+  winston.info(`App listening on port ${config.port}!`);
 });

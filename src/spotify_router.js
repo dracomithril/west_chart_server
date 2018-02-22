@@ -4,11 +4,11 @@
 const Spotify = require('spotify-web-api-node');
 const router = require('express').Router();
 const winston = require('winston');
+const config = require('./config');
+const url = require('url');
 
-const clientId = process.env.CLIENT_ID;
-const clientSecret = process.env.CLIENT_SECRET;
-const redirectUri =
-  process.env.REDIRECT_URI || `http://localhost:${process.env.PORT || 3001}/api/spotify/callback`;
+const pathname = '/api/spotify/callback';
+const redirectUri = url.resolve(config.spotify.redirectUrl, pathname);
 const scopes = [
   'user-read-private',
   'user-read-email',
@@ -19,8 +19,8 @@ const scopes = [
 ];
 // configure spotify
 const credentials = {
-  clientId,
-  clientSecret,
+  clientId: config.spotify.clientId,
+  clientSecret: config.spotify.clientSecret,
   redirectUri,
 };
 
@@ -41,6 +41,14 @@ const generateRandomString = N =>
  * @returns {*}
  */
 module.exports = function SpotifyHandlers() {
+  router.get('/config_state', (req, res) => {
+    const configState = {
+      cliendId: Boolean(config.spotify.clientId),
+      cliendSecret: Boolean(config.spotify.clientSecret),
+      redirectUri: Boolean(config.spotify.redirectUrl),
+    };
+    res.send(configState);
+  });
   router.get('/login_f', (req, res) => {
     const state = generateRandomString(16);
     const spotifyApi = new Spotify(credentials);
