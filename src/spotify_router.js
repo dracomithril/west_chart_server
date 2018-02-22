@@ -8,7 +8,7 @@ const config = require('./config');
 const url = require('url');
 
 const pathname = '/api/spotify/callback';
-const redirectUri = url.resolve(config.spotify.redirectUrl, pathname);
+const redirectUri = url.resolve(config.redirectUrl, pathname);
 const scopes = [
   'user-read-private',
   'user-read-email',

@@ -3,18 +3,18 @@ const skipHttpRedirect = process.env.SKIP_HTTPS_REDIRECT;
 const port = process.env.PORT || 3001;
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
-const redirecturi = process.env.REDIRECT_URI;
+const appUrl = process.env.REDIRECT_URI;
 // TODO validate if all env provided
 const config = {
   isProduction,
   skipHttpRedirect,
   port,
+  get redirectUrl() {
+    return isProduction ? appUrl : `http://localhost:${port}`;
+  },
   spotify: {
     clientId,
     clientSecret,
-    get redirectUrl() {
-      return isProduction ? redirecturi : `http://localhost:${port}`;
-    },
   },
 };
 

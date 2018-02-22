@@ -15,6 +15,7 @@ const winston = require('winston');
 const spotify = require('./spotify_router');
 const fb_router = require('./fb_ruter');
 const config = require('./config');
+const https = require('https');
 
 const app = express();
 const router = express.Router();
@@ -67,9 +68,9 @@ if (config.isProduction) {
       } else next();
     });
   }
-  // setInterval(() => {
-  //   https.get('https://wcs-dance-chart-admin.herokuapp.com/api/info');
-  // }, 280000); // every 5 minutes (300000)
+  setInterval(() => {
+    https.get(`${config.redirectUrl}/api/info`);
+  }, 280000); // every 5 minutes (300000)
 }
 // todo don't log api/info
 app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
