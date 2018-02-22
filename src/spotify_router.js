@@ -45,7 +45,8 @@ module.exports = function SpotifyHandlers() {
     const configState = {
       cliendId: Boolean(config.spotify.clientId),
       cliendSecret: Boolean(config.spotify.clientSecret),
-      redirectUri: Boolean(config.spotify.redirectUrl),
+      redirectUriExists: Boolean(config.spotify.redirectUrl),
+      redirectUri: config.spotify.redirectUrl,
     };
     res.send(configState);
   });
