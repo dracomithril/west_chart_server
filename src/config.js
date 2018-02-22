@@ -1,11 +1,19 @@
+const isProduction = process.env.NODE_ENV === 'production';
+const skipHttpRedirect = process.env.SKIP_HTTPS_REDIRECT;
+const port = process.env.PORT || 3001;
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
+const redirecturi = process.env.REDIRECT_URI;
 const config = {
-  isProduction: process.env.NODE_ENV === 'production',
-  skipHttpRedirect: process.env.SKIP_HTTPS_REDIRECT,
-  port: process.env.PORT || 3001,
+  isProduction,
+  skipHttpRedirect,
+  port,
   spotify: {
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    redirectUrl: this.isProduction ? process.env.REDIRECT_URI : `http://localhost:${this.port}`,
+    clientId,
+    clientSecret,
+    get redirectUrl() {
+      return isProduction ? redirecturi : `http://localhost:${port}`;
+    },
   },
 };
 
