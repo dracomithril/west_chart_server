@@ -4,6 +4,7 @@ const port = process.env.PORT || 3001;
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const redirecturi = process.env.REDIRECT_URI;
+// TODO validate if all env provided
 const config = {
   isProduction,
   skipHttpRedirect,
