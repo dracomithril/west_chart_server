@@ -65,7 +65,7 @@ module.exports = function SpotifyHandlers() {
     res.redirect(spotifyApi.createAuthorizeURL(scopes, state));
   });
 
-  router.get('/callback', ({ query, cookies }, res) => {
+  router.get('/callback', ({ query, cookies, headers }, res) => {
     const { code, state } = query;
     const storedState = cookies ? cookies[cookies_name.stateKey] : null;
     // first do state validation
@@ -75,6 +75,7 @@ module.exports = function SpotifyHandlers() {
       // if the state is valid, get the authorization code and pass it on to the client
     } else {
       res.clearCookie(cookies_name.stateKey);
+      const domain = url.parse(headers.referer).hostname;
       const spotifyApi = new Spotify(credentials);
       // Retrieve an access token and a refresh token
       spotifyApi
@@ -84,8 +85,11 @@ module.exports = function SpotifyHandlers() {
           winston.info(`The access token expires in ${expires_in}`);
           res.cookie(cookies_name.access_token, access_token, {
             maxAge: expires_in * 1000,
+            domain,
           });
-          res.cookie(cookies_name.refresh_token, refresh_token);
+          res.cookie(cookies_name.refresh_token, refresh_token, {
+            domain,
+          });
           res.redirect('/');
         })
         .catch(err => {
