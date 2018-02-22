@@ -76,7 +76,7 @@ module.exports = function SpotifyHandlers() {
     } else {
       res.clearCookie(cookies_name.stateKey);
       const domain = url.parse(headers.referer).hostname;
-      winston.log('domain:', domain);
+      winston.info('domain:', domain);
       const spotifyApi = new Spotify(credentials);
       // Retrieve an access token and a refresh token
       spotifyApi
