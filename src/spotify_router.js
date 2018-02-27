@@ -50,18 +50,11 @@ module.exports = function SpotifyHandlers() {
     };
     res.send(configState);
   });
-  router.get('/login_f', (req, res) => {
-    const state = generateRandomString(16);
-    const spotifyApi = new Spotify(credentials);
-    const body = spotifyApi.createAuthorizeURL(scopes, state);
-    winston.info(body);
-    res.cookie(cookies_name.stateKey, state);
-    res.status(200).send({ url: body });
-  });
+
   router.get('/login_r', (req, res) => {
     const state = generateRandomString(16);
     const spotifyApi = new Spotify(credentials);
-    res.cookie(cookies_name.stateKey, state);
+    res.cookie(cookies_name.stateKey, state, { path: '/api/spotify/callback' });
     res.redirect(spotifyApi.createAuthorizeURL(scopes, state));
   });
 
@@ -75,29 +68,37 @@ module.exports = function SpotifyHandlers() {
       // if the state is valid, get the authorization code and pass it on to the client
     } else {
       res.clearCookie(cookies_name.stateKey);
-      const domain = url.parse(headers.referer).hostname;
-      winston.info('domain:', domain);
       const spotifyApi = new Spotify(credentials);
       // Retrieve an access token and a refresh token
       spotifyApi
         .authorizationCodeGrant(code)
-        .then(({ body }) => {
-          const { expires_in, access_token, refresh_token } = body;
+        .then(response => {
+          const { body: { expires_in, access_token, refresh_token } } = response;
           winston.info(`The access token expires in ${expires_in}`);
+          const cookieObtainCredentialsPath = '/api/spotify/obtain_credentials';
           res.cookie(cookies_name.access_token, access_token, {
             maxAge: expires_in * 1000,
-            domain,
+            path: cookieObtainCredentialsPath,
           });
           res.cookie(cookies_name.refresh_token, refresh_token, {
-            domain,
+            maxAge: 3000,
+            path: cookieObtainCredentialsPath,
           });
-          res.redirect('/');
+          res.end();
         })
         .catch(err => {
           winston.error(err);
           res.redirect('/#/error/invalid_token');
         });
     }
+  });
+  router.get('/obtain_credentials', ({ cookies }, res) => {
+    const atCookie = cookies[cookies_name.access_token];
+    const rtCookie = cookies[cookies_name.refresh_token];
+    res.send({
+      access_token: atCookie,
+      refresh_token: rtCookie,
+    });
   });
 
   router.post('/refresh_token', ({ body: { refresh_token } }, res) => {

@@ -1,32 +1,17 @@
+/* eslint-env node, es6 */
 /**
  * Created by Gryzli on 18.06.2017.
  */
-/* eslint-env node, es6 */
+jest.mock('express');
 const sinon = require('sinon');
-describe('[server]', function () {
-  const router = {
-    use: sinon.stub(),
-    get: sinon.stub(),
-    put: sinon.stub(),
-    post: sinon.stub(),
-  };
-  let expressMock = {
-    use: sinon.stub(),
-    get: sinon.stub(),
-    put: sinon.stub(),
-    set: sinon.stub(),
-    engine: sinon.stub(),
-    listen: sinon.stub(),
-  };
-  it("check if server started", function () {
-    jest.mock('express');
-    let express = require('express');
-    express.mockImplementation(() => expressMock);
-    express.Router.mockImplementation(() => router);
-    require('../index');
+const server = require('../index');
 
-    sinon.assert.calledOnce(expressMock.listen);
-    sinon.assert.callCount(expressMock.get, 0);
-    sinon.assert.callCount(expressMock.use, 9);
+describe('[server]', function () {
+  it("check if server started", function () {
+    const express = require('express');
+    server();
+    sinon.assert.calledOnce(express.mocks.express.listen);
+    sinon.assert.callCount(express.mocks.express.get, 0);
+    sinon.assert.callCount(express.mocks.express.use, 11);
   });
 });

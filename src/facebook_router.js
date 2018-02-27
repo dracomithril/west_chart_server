@@ -13,10 +13,10 @@ const groupId = '1707149242852457';
  * @return {*}
  */
 module.exports = function returnFbRouter() {
-  router.use('/policy', (req, res) => {
+  router.use('/fb/policy', (req, res) => {
     res.render('privacy_policy');
   });
-  router.get('/get_chart', ({ query }, res) => {
+  router.get('/fb/get_chart', ({ query }, res) => {
     winston.log('in get chart.');
     winston.profile('obtain-chart');
     const days = query.days ? Number(query.days) : 31;
