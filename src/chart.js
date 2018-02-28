@@ -3,8 +3,9 @@
  */
 const winston = require('winston');
 const request = require('request-promise-native');
+const path = require('path');
 
-const apiVer = process.env.FB_API_VERSION || 'v2.12';
+const apiVer = process.env.FB_API_VERSION || '';
 const limit = 100;
 let days = 7;
 // let EventEmitter = require('events').EventEmitter;
@@ -55,10 +56,10 @@ function obtainList(since, until, groupId, accessToken) {
       since,
       until,
     };
-    const path = `/${apiVer}/${groupId}/feed`;
+    const pathname = path.resolve('/', apiVer, groupId, 'feed');
 
     const options = {
-      uri: path,
+      uri: pathname,
       baseUrl: address,
       qs: query,
       port: 443,
