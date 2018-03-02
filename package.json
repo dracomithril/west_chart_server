@@ -11,7 +11,9 @@
   "scripts": {
     "start:srv": "node scripts/start_srv.js",
     "start": "node src/index.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "lint": "eslint \"**/*.@(js|jsx)\"",
+    "format": "npm run lint -- --fix"
   },
   "dependencies": {
     "body-parser": "1.18.2",

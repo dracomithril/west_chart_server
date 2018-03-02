@@ -2,3 +2,4 @@ node_modules
 scripts
 ___tests___
 __mocks__
+coverage
