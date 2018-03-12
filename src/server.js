@@ -23,11 +23,12 @@ const blackList = ['/api/info'];
 winston.info('NODE_ENV:', process.env.NODE_ENV);
 winston.info(version);
 winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
+const { client } = config;
 // TODO add JWT validation
 module.exports = () => {
   const app = express();
 
-  app.use(cors({ origin: '^(https?://(?:.+\\.)?herokuapp\\.com(?::\\d{1,5})?)$' }));
+  app.use(cors({ origin: `https://${client}.herokuapi.com` }));
   app.use(serveStatic(path.join(__dirname, '..', 'public')));
   app.set('views', path.join(__dirname, '..', 'public'));
   app.engine('html', ejs.renderFile);
