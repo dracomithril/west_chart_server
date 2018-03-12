@@ -27,7 +27,7 @@ winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
 module.exports = () => {
   const app = express();
 
-  app.use(cors());
+  app.use(cors({ origin: '^(https?://(?:.+\\.)?herokuapp\\.com(?::\\d{1,5})?)$' }));
   app.use(serveStatic(path.join(__dirname, '..', 'public')));
   app.set('views', path.join(__dirname, '..', 'public'));
   app.engine('html', ejs.renderFile);
