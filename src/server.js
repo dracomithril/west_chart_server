@@ -28,7 +28,7 @@ const { client } = config;
 module.exports = () => {
   const app = express();
 
-  app.use(cors({ origin: `https://${client}.herokuapp.com` }));
+  app.use(cors({ origin: `https://${client}.herokuapp.com`, credentials: true }));
   app.use(serveStatic(path.join(__dirname, '..', 'public')));
   app.set('views', path.join(__dirname, '..', 'public'));
   app.engine('html', ejs.renderFile);
