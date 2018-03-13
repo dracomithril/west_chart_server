@@ -56,7 +56,7 @@ module.exports = function SpotifyHandlers() {
     const spotifyApi = new Spotify(credentials);
     winston.info(`headers login_r: ${JSON.stringify(req.headers, null, 2)}`);
     res.cookie(cookies_name.stateKey, state, { path: '/api/spotify/callback' });
-    res.redirect(spotifyApi.createAuthorizeURL(scopes, state));
+    res.send(spotifyApi.createAuthorizeURL(scopes, state));
   });
 
   router.get('/callback', ({ query, cookies, headers }, res) => {
@@ -83,11 +83,10 @@ module.exports = function SpotifyHandlers() {
             path: cookieObtainCredentialsPath,
           });
           res.cookie(cookies_name.refresh_token, refresh_token, {
-            maxAge: 3000,
+            maxAge: 360000,
             path: cookieObtainCredentialsPath,
           });
-          res.cookie('test_cookie', 'cookies');
-          res.end();
+          res.redirect('/login/getCredentials');
         })
         .catch(err => {
           winston.error(err);

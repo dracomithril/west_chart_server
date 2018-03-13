@@ -15,7 +15,7 @@ const config = {
   port,
   hostname: appUrl,
   get redirectUrl() {
-    return url.resolve(`${isProduction ? appUrl : `http://localhost:${port}`}`, redirectPath);
+    return url.resolve(`${isProduction ? appUrl : `http://localhost:${3000}`}`, redirectPath);
   },
   spotify: {
     clientId,
