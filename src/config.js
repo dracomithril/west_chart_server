@@ -18,7 +18,10 @@ const config = {
     return url.resolve(`${isProduction ? appUrl : `http://localhost:${port}`}`, redirectPath);
   },
   get redirectLoginUrl() {
-    return url.resolve(`${isProduction ? appUrl : ``}`, '/login/getCredentials');
+    return url.resolve(
+      `${isProduction ? `https://${client}.herokuapp.com` : ``}`,
+      '/login/getCredentials',
+    );
   },
   spotify: {
     clientId,
