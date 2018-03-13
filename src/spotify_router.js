@@ -96,7 +96,7 @@ module.exports = function SpotifyHandlers() {
   router.get('/obtain_credentials', ({ cookies }, res) => {
     const atCookie = cookies[cookies_name.access_token];
     const rtCookie = cookies[cookies_name.refresh_token];
-    winston.info('cookies:', cookies);
+    winston.info(`cookies: ${JSON.stringify(cookies)}`);
     if (atCookie || rtCookie) {
       winston.info('credentials found.');
       res.send({
