@@ -8,7 +8,7 @@ const config = require('./config');
 const url = require('url');
 
 const pathname = '/api/spotify/callback';
-const redirectUri = url.resolve(config.redirectUrl, pathname);
+const redirectUri = url.resolve(config.redirectCallbackUrl, pathname);
 const scopes = [
   'user-read-private',
   'user-read-email',
@@ -45,8 +45,8 @@ module.exports = function SpotifyHandlers() {
     const configState = {
       cliendId: Boolean(config.spotify.clientId),
       cliendSecret: Boolean(config.spotify.clientSecret),
-      redirectUriExists: Boolean(config.spotify.redirectUrl),
-      redirectUri: config.spotify.redirectUrl,
+      redirectUriExists: Boolean(config.spotify.redirectCallbackUrl),
+      redirectUri: config.spotify.redirectCallbackUrl,
     };
     res.send(configState);
   });
@@ -86,7 +86,7 @@ module.exports = function SpotifyHandlers() {
             maxAge: 360000,
             path: cookieObtainCredentialsPath,
           });
-          res.redirect('/login/getCredentials');
+          res.redirect(config.redirectLoginUrl);
         })
         .catch(err => {
           winston.error(err);

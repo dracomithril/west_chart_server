@@ -14,8 +14,11 @@ const config = {
   skipHttpRedirect,
   port,
   hostname: appUrl,
-  get redirectUrl() {
-    return url.resolve(`${isProduction ? appUrl : `http://localhost:${3000}`}`, redirectPath);
+  get redirectCallbackUrl() {
+    return url.resolve(`${isProduction ? appUrl : `http://localhost:${port}`}`, redirectPath);
+  },
+  get redirectLoginUrl() {
+    return url.resolve(`${isProduction ? appUrl : ``}`, '/login/getCredentials');
   },
   spotify: {
     clientId,
