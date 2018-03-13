@@ -95,10 +95,17 @@ module.exports = function SpotifyHandlers() {
   router.get('/obtain_credentials', ({ cookies }, res) => {
     const atCookie = cookies[cookies_name.access_token];
     const rtCookie = cookies[cookies_name.refresh_token];
-    res.send({
-      access_token: atCookie,
-      refresh_token: rtCookie,
-    });
+    winston.info(cookies);
+    if (atCookie || rtCookie) {
+      winston.info('credentials found.');
+      res.send({
+        access_token: atCookie,
+        refresh_token: rtCookie,
+      });
+    } else {
+      winston.info('No credentials found');
+      res.status(404).send(new Error('No credentials found'));
+    }
   });
 
   router.post('/refresh_token', ({ body: { refresh_token } }, res) => {
