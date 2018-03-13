@@ -54,14 +54,14 @@ module.exports = function SpotifyHandlers() {
   router.get('/login_r', (req, res) => {
     const state = generateRandomString(16);
     const spotifyApi = new Spotify(credentials);
-    winston.info('headers:', JSON.stringify(req.headers, null, 2));
+    winston.info(`headers login_r: ${JSON.stringify(req.headers, null, 2)}`);
     res.cookie(cookies_name.stateKey, state, { path: '/api/spotify/callback' });
     res.redirect(spotifyApi.createAuthorizeURL(scopes, state));
   });
 
   router.get('/callback', ({ query, cookies, headers }, res) => {
     const { code, state } = query;
-    winston.info('headers:', JSON.stringify(headers, null, 2));
+    winston.info(`headers callback: ${JSON.stringify(headers, null, 2)}`);
     const storedState = cookies ? cookies[cookies_name.stateKey] : null;
     // first do state validation
     if (state === null || state !== storedState) {
@@ -96,7 +96,7 @@ module.exports = function SpotifyHandlers() {
     }
   });
   router.get('/obtain_credentials', ({ cookies, headers }, res) => {
-    winston.info('headers:', JSON.stringify(headers, null, 2));
+    winston.info(`headers obtain_credentials: ${JSON.stringify(headers, null, 2)}`);
     const atCookie = cookies[cookies_name.access_token];
     const rtCookie = cookies[cookies_name.refresh_token];
     winston.info(`cookies: ${JSON.stringify(cookies)}`);
