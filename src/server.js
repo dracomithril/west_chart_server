@@ -69,7 +69,7 @@ module.exports = () => {
       });
     }
     setInterval(() => {
-      https.get(`${config.redirectUrl}/api/info`);
+      https.get(`${config.hostname}/api/info`);
     }, 280000); // every 5 minutes (300000)
   }
   // todo don't log api/info

@@ -13,6 +13,7 @@ const config = {
   isProduction,
   skipHttpRedirect,
   port,
+  hostname: appUrl,
   get redirectUrl() {
     return url.resolve(`${isProduction ? appUrl : `http://localhost:${port}`}`, redirectPath);
   },

@@ -84,6 +84,7 @@ module.exports = function SpotifyHandlers() {
             maxAge: 3000,
             path: cookieObtainCredentialsPath,
           });
+          res.cookie('test_cookie', 'cookies');
           res.end();
         })
         .catch(err => {
@@ -95,7 +96,7 @@ module.exports = function SpotifyHandlers() {
   router.get('/obtain_credentials', ({ cookies }, res) => {
     const atCookie = cookies[cookies_name.access_token];
     const rtCookie = cookies[cookies_name.refresh_token];
-    winston.info(cookies);
+    winston.info('cookies:', cookies);
     if (atCookie || rtCookie) {
       winston.info('credentials found.');
       res.send({
