@@ -100,9 +100,7 @@ function obtainList(since, until, groupId, accessToken) {
       .then(reactOnBody)
       .then(resolve)
       .catch(err => {
-        winston.error(
-          `error obtaining chart list. statusCode: ${err.statusCode} body: ${err.sub_error}`,
-        );
+        winston.error(`error obtaining chart list. statusCode: ${err.statusCode} body: ${err.sub_error}`);
         reject(err);
       });
   });
@@ -112,18 +110,14 @@ function filterChartAndMap(body) {
   return new Promise(resolve => {
     const map = body.map(elem => {
       const comments = elem.comments.data.filter(({ message }) => {
-        const search = message.match(
-          /(\[Added)\s(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d]/g,
-        );
+        const search = message.match(/(\[Added)\s(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d]/g);
         return search !== null;
       });
       let addedTime;
       let addedBy;
       if (comments.length > 0) {
         const { message } = comments[0];
-        const match = message.match(
-          /(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/g,
-        )[0];
+        const match = message.match(/(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/g)[0];
         const date = match.split(/[- /.]/g);
         // todo test for added
         const year = Number(date[2]);
@@ -132,8 +126,7 @@ function filterChartAndMap(body) {
         addedTime = new Date(year, month, day);
         addedBy = comments[0].from.name;
       }
-      const attachment =
-        ((elem.attachments || {}).data || []).length > 0 ? elem.attachments.data[0] : {};
+      const attachment = ((elem.attachments || {}).data || []).length > 0 ? elem.attachments.data[0] : {};
 
       const link = {
         url: elem.link,

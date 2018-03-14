@@ -24,9 +24,7 @@ router.get('/info', (req, res) => {
   res.end();
 });
 router.put('/log_errors', (req, res) => {
-  winston.warn(
-    'Error was logged but seving logs is still not implemented so we implement that in logs',
-  );
+  winston.warn('Error was logged but seving logs is still not implemented so we implement that in logs');
   winston.error(req.body);
   res.status(200).send();
 });
@@ -34,10 +32,7 @@ router.put('/user/login/:id', ({ params, body }, res) => {
   // Connection URL
   // Use connect method to connect to the Server
   let database;
-  body._id =
-    process.env.NODE_ENV === 'production'
-      ? params.id
-      : `${process.env.NODE_ENV.substr(0, 4)}_${params.id}`;
+  body._id = process.env.NODE_ENV === 'production' ? params.id : `${process.env.NODE_ENV.substr(0, 4)}_${params.id}`;
 
   if (process.env.MONGODB_URI) {
     try {

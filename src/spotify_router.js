@@ -25,16 +25,16 @@ const credentials = {
 };
 
 const cookies_name = {
-  access_token: 'wcs_sp_user_ac',
-  refresh_token: 'wcs_sp_user_refresh_token',
-  stateKey: 'spotify_auth_state',
+  access_token: 'server-spotify_user_access-token',
+  refresh_token: 'server-spotify_user_refresh-token',
+  stateKey: 'server-spotify_auth_state',
+  from: 'spotify_redirect_to',
 };
 Object.freeze(cookies_name);
 winston.debug(redirectUri);
 
 /** Generates a random string containing numbers and letters of N characters */
-const generateRandomString = N =>
-  (Math.random().toString(36) + new Array(N).join('0')).slice(2, N + 2);
+const generateRandomString = N => (Math.random().toString(36) + new Array(N).join('0')).slice(2, N + 2);
 
 /**
  * Returns spotify router
@@ -86,7 +86,7 @@ module.exports = function SpotifyHandlers() {
             maxAge: 360000,
             path: cookieObtainCredentialsPath,
           });
-          res.redirect(config.redirectLoginUrl);
+          res.redirect(config.redirectLoginUrl(cookies[cookies_name.from]));
         })
         .catch(err => {
           winston.error(err);
