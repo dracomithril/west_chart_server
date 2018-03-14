@@ -101,6 +101,8 @@ module.exports = function SpotifyHandlers() {
     winston.info(`cookies: ${JSON.stringify(cookies)}`);
     if (atCookie || rtCookie) {
       winston.info('credentials found.');
+      res.clearCookie(cookies_name.access_token);
+      res.clearCookie(cookies_name.refresh_token);
       res.send({
         access_token: atCookie,
         refresh_token: rtCookie,
