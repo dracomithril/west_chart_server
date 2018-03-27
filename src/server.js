@@ -68,9 +68,9 @@ module.exports = () => {
         } else next();
       });
     }
-    setInterval(() => {
-      https.get(`${config.hostname}/api/info`);
-    }, 280000); // every 5 minutes (300000)
+    // setInterval(() => {
+    //  https.get(`${config.hostname}/api/info`);
+    // }, 280000); // every 5 minutes (300000)
   }
   // todo don't log api/info
   app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
