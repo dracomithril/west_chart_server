@@ -7,7 +7,6 @@ const path = require('path');
 
 const apiVer = process.env.FB_API_VERSION || '';
 const limit = 100;
-let days = 7;
 // let EventEmitter = require('events').EventEmitter;
 const fieldsArr = [
   'story',
@@ -148,20 +147,7 @@ function filterChartAndMap(body) {
  */
 function UpdateChart(show_days, since, until, access_token, groupId) {
   return new Promise((resolve, reject) => {
-    days = show_days;
-    let a_since;
-    let a_until;
-    if (!until || !since) {
-      const date = new Date();
-      const since_date = new Date();
-      since_date.setDate(date.getDate() - days);
-      a_until = Math.round(date.getTime() / 1000.0);
-      a_since = Math.round(since_date.getTime() / 1000.0);
-    } else {
-      a_since = since;
-      a_until = until;
-    }
-    obtainList(a_since, a_until, groupId, access_token)
+    obtainList(since, until, groupId, access_token)
       .then(filterChartAndMap)
       .then(body => {
         const cache = {
