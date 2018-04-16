@@ -30,6 +30,8 @@ const fieldsArr = [
 const fields = fieldsArr.join(',');
 const timeout = 9000;
 
+const getFbPictureUrl = id => `https://graph.facebook.com/${id}/picture?height=50`;
+
 function GetError(res) {
   const error = new Error();
   error.statusCode = res.statusCode;
@@ -63,7 +65,6 @@ function obtainList(since, until, groupId, accessToken) {
       baseUrl: address,
       qs: query,
       port: 443,
-      path,
       method: 'GET',
       timeout,
       simple: true,
@@ -109,23 +110,6 @@ function obtainList(since, until, groupId, accessToken) {
 function filterChartAndMap(body) {
   return new Promise(resolve => {
     const map = body.map(elem => {
-      const comments = elem.comments.data.filter(({ message }) => {
-        const search = message.match(/(\[Added)\s(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d]/g);
-        return search !== null;
-      });
-      let addedTime;
-      let addedBy;
-      if (comments.length > 0) {
-        const { message } = comments[0];
-        const match = message.match(/(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/g)[0];
-        const date = match.split(/[- /.]/g);
-        // todo test for added
-        const year = Number(date[2]);
-        const month = Number(date[1]) - 1;
-        const day = Number(date[0]);
-        addedTime = new Date(year, month, day);
-        addedBy = comments[0].from.name;
-      }
       const attachment = ((elem.attachments || {}).data || []).length > 0 ? elem.attachments.data[0] : {};
 
       const link = {
@@ -134,12 +118,10 @@ function filterChartAndMap(body) {
         title: attachment.type === 'music_aggregation' ? attachment.description : attachment.title,
         type: attachment.type,
       };
+      const from = { ...elem.from, picture_url: getFbPictureUrl(elem.from.id) };
       return {
-        added_time: addedTime,
-        added_by: addedBy,
         created_time: elem.created_time,
-        from: elem.from,
-        from_user: elem.from.name,
+        from,
         full_picture: elem.full_picture,
         id: elem.id,
         likes_num: elem.likes.summary.total_count,
