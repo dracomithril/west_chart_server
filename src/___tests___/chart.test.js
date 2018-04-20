@@ -53,10 +53,10 @@ describe('[chart]', function () {
             .mockReturnValueOnce(Promise.resolve(body2));
 
         const date = new Date('2017-03-03T23:00:00');
-        let since_date = new Date(date.toISOString());
-        since_date.setDate(date.getDate() - 31);
+        let sinceDate = new Date(date.toISOString());
+        sinceDate.setDate(date.getDate() - 31);
 
-        Chart(31, since_date.toISOString(), date.toISOString(), '', groupId).then((res) => {
+        Chart(31, sinceDate.toISOString(), date.toISOString(), '', groupId).then((res) => {
             expect(request.mock.calls.length).toBe(1);
             expect(res.chart.length).toEqual(97);
             done();

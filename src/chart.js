@@ -119,7 +119,7 @@ function filterChartAndMap(body) {
       };
       const from = { ...elem.from, picture_url: getFbPictureUrl(elem.from.id) };
       return {
-        created_time: elem.created_time,
+        createdTime: elem.createdTime,
         from,
         full_picture: elem.full_picture,
         id: elem.id,
@@ -152,7 +152,7 @@ function UpdateChart(show_days, since, until, access_token, groupId) {
       .then(body => {
         const cache = {
           chart: body,
-          last_update: new Date().toISOString(),
+          lastUpdateDate: new Date().toISOString(),
         };
         resolve(cache);
       })
