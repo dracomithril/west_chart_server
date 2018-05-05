@@ -126,7 +126,7 @@ function filterChartAndMap(body) {
         likes_num: elem.likes.summary.total_count,
         link,
         message: elem.message,
-        reactions_num: elem.reactions.summary.total_count,
+        reactionsNum: elem.reactions.summary.total_count,
         selected: false,
         source: elem.source,
         type: elem.type,
