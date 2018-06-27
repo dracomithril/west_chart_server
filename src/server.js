@@ -15,7 +15,6 @@ const serveStatic = require('serve-static');
 const spotify = require('./spotify_router');
 const fb_router = require('./facebook_router');
 const config = require('./config');
-const https = require('https');
 const common = require('./common_router');
 
 const blackList = ['/api/info'];
