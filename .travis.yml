@@ -3,8 +3,8 @@ node_js:
   - "lts/*"
 
 script:
-  - yarn lint
-  - yarn test
+  - yarn run lint
+  - yarn run test
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.6.0
