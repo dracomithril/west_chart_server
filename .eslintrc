@@ -40,10 +40,6 @@
       }
     ],
     "object-curly-newline": "off",
-    "react/jsx-filename-extension": "off",
-    "react/require-default-props": "off",
-    "react/forbid-prop-types": "off",
-    "react/no-array-index-key": "warn",
     "import/no-extraneous-dependencies": "off",
     "import/prefer-default-export": "warn",
     "jsx-a11y/href-no-hash": "off",
