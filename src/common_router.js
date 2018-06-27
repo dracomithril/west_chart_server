@@ -1,7 +1,7 @@
 const express = require('express');
-const { version } = require('./../package');
 const { MongoClient } = require('mongodb');
 const winston = require('winston');
+const { version } = require('./../package');
 const config = require('./config');
 
 const router = express.Router();

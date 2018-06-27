@@ -4,8 +4,8 @@
 const Spotify = require('spotify-web-api-node');
 const router = require('express').Router();
 const winston = require('winston');
-const config = require('./config');
 const url = require('url');
+const config = require('./config');
 
 const pathname = '/api/spotify/callback';
 const redirectUri = url.resolve(config.redirectCallbackUrl, pathname);
