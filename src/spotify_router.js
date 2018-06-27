@@ -75,7 +75,9 @@ module.exports = function SpotifyHandlers() {
       spotifyApi
         .authorizationCodeGrant(code)
         .then(response => {
-          const { body: { expires_in, access_token, refresh_token } } = response;
+          const {
+            body: { expires_in, access_token, refresh_token },
+          } = response;
           winston.info(`The access token expires in ${expires_in}`);
           const cookieObtainCredentialsPath = '/api/spotify/obtain_credentials';
           res.cookie(cookies_name.access_token, access_token, {
