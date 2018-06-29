@@ -97,10 +97,10 @@ module.exports = function SpotifyHandlers() {
     }
   });
   router.get('/obtain_credentials', ({ cookies, headers }, res) => {
-    winston.info(`headers obtain_credentials: ${JSON.stringify(headers, null, 2)}`);
+    winston.debug(`headers obtain_credentials: ${JSON.stringify(headers, null, 2)}`);
     const atCookie = cookies[cookies_name.access_token];
     const rtCookie = cookies[cookies_name.refresh_token];
-    winston.info(`cookies: ${JSON.stringify(cookies)}`);
+    winston.debug(`cookies: ${JSON.stringify(cookies)}`);
     if (atCookie || rtCookie) {
       winston.info('credentials found.');
       res.clearCookie(cookies_name.access_token);
@@ -110,7 +110,7 @@ module.exports = function SpotifyHandlers() {
         refresh_token: rtCookie,
       });
     } else {
-      winston.info('No credentials found');
+      winston.warn('No credentials found');
       res.status(404).send(new Error('No credentials found'));
     }
   });
