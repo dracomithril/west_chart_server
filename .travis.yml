@@ -14,3 +14,4 @@ deploy:
   app: wcs-api
   on:
     repo: dracomithril/west_chart_server
+    tags: true
