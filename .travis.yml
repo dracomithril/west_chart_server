@@ -10,7 +10,7 @@ jobs:
     - stage: test
       script: yarn run lint
       script: yarn run test
-    - if: tah IS present
+    - if: tag IS present
       stage: deploy to production
       script: skip
       deploy: &heroku
