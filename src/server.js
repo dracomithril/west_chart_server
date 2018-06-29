@@ -4,95 +4,38 @@
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
-const ejs = require('ejs');
 const cors = require('cors');
 const express = require('express');
-const expressWinston = require('express-winston');
+const morgan = require('morgan');
 const winston = require('winston');
-const path = require('path');
-const serveStatic = require('serve-static');
 const { version } = require('./../package');
-const spotify = require('./spotify_router');
-const fb_router = require('./facebook_router');
 const config = require('./config');
-const common = require('./common_router');
+const spotify = require('./routers/spotify_router');
+const common = require('./routers/common_router');
 
-const blackList = ['/api/info'];
-
+const { client } = config;
 winston.info('NODE_ENV:', process.env.NODE_ENV);
 winston.info(version);
 winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
-const { client } = config;
-// TODO add JWT validation
+
 module.exports = () => {
   const app = express();
-
+  app.use(morgan('tiny'));
   app.use(cors({ origin: `https://${client}.herokuapp.com`, credentials: true }));
-  app.use(serveStatic(path.join(__dirname, '..', 'public')));
-  app.set('views', path.join(__dirname, '..', 'public'));
-  app.engine('html', ejs.renderFile);
-  app.set('view engine', 'html');
   app.use(compression());
   app.use(bodyParser.json());
   app.use(cookieParser());
 
-  const ignoreRoute = (req /* , res */) =>
-    blackList.indexOf(req.originalUrl || req.url) !== -1 || req.originalUrl.includes('/static/');
-
-  app.use(
-    expressWinston.logger({
-      transports: [
-        new winston.transports.Console({
-          json: true,
-          colorize: true,
-        }),
-      ],
-      meta: false, // optional: control whether you want to log the meta data about the request (default to true)
-      msg: 'HTTP {{req.method}} {{res.statusCode}} {{req.url}}', // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
-      expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
-      colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-      requestWhitelist: ['url', 'headers', 'method', 'httpVersion'],
-      bodyBlacklist: ['refresh_token', 'access_token'],
-      ignoreRoute, // optional: allows to skip some log messages based on request and/or response
-      skip: ignoreRoute,
-    }),
-  );
-  if (config.isProduction) {
-    if (!config.skipHttpRedirect) {
-      // Serve static assets
-      app.use((req, res, next) => {
-        if (req.headers['x-forwarded-proto'] !== 'https') {
-          winston.info(`redirected from http. secure: ${req.secure.toString()}`);
-          res.redirect(`https://${req.get('host')}${req.url}`);
-        } else next();
-      });
-    }
-    // setInterval(() => {
-    //  https.get(`${config.hostname}/api/info`);
-    // }, 280000); // every 5 minutes (300000)
+  if (config.isProduction && !config.skipHttpRedirect) {
+    app.use((req, res, next) => {
+      if (req.headers['x-forwarded-proto'] !== 'https') {
+        winston.info(`redirected from http. secure: ${req.secure.toString()}`);
+        res.redirect(`https://${req.get('host')}${req.url}`);
+      } else next();
+    });
   }
-  // todo don't log api/info
-  app.use('/404', express.static(path.resolve(__dirname, 'public', 'not_found')));
 
   app.use('/api', common);
-  app.use('/api', fb_router());
   app.use('/api/spotify', spotify());
-  // keep alive
-  app.use((req, res) => {
-    res.status(404);
-    if (req.accepts('html')) {
-      res.render('not_found');
-      return;
-    }
-
-    // respond with json
-    if (req.accepts('json')) {
-      res.send({ error: 'Not found' });
-      return;
-    }
-
-    // default to plain-text. send()
-    res.type('txt').send('Not found');
-  });
   return app;
 };

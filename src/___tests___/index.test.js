@@ -12,6 +12,6 @@ describe('[server]', function () {
     server();
     sinon.assert.calledOnce(express.mocks.express.listen);
     sinon.assert.callCount(express.mocks.express.get, 0);
-    sinon.assert.callCount(express.mocks.express.use, 11);
+    sinon.assert.callCount(express.mocks.express.use, 7);
   });
 });

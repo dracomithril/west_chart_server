@@ -1,6 +1,6 @@
 {
   "name": "west_chart_server",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "server api side of application",
   "main": "src/index.js",
   "engines": {
@@ -10,7 +10,7 @@
   "scripts": {
     "start:srv": "node scripts/start_srv.js",
     "start": "node src/index.js",
-    "test":"jest --env=jsdom",
+    "test": "jest --env=jsdom",
     "test-cli": "node scripts/test.js --env=jsdom",
     "lint": "eslint \"**/*.@(js|jsx)\"",
     "format": "npm run lint -- --fix"
@@ -20,14 +20,10 @@
     "compression": "^1.7.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
-    "ejs": "^2.5.8",
     "express": "^4.16.3",
-    "express-winston": "^2.5.0",
-    "mongodb": "^3.0.5",
+    "morgan": "^1.9.0",
     "request": "^2.87.0",
     "request-promise-native": "1.0.5",
-    "serve-favicon": "2.4.5",
-    "serve-static": "1.13.2",
     "spotify-web-api-node": "3.0.0",
     "winston": "^2.4.1"
   },

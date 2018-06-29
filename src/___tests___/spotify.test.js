@@ -5,7 +5,7 @@
 describe('[spotify]', function () {
     let Spotify;
     beforeAll(()=> {
-        Spotify = require('../spotify_router');
+        Spotify = require('../routers/spotify_router');
     });
     afterAll(() =>{
     });
