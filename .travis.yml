@@ -12,7 +12,7 @@ jobs:
       script: yarn run test
     - if: tah IS present
       stage: deploy to production
-      script: yarn build
+      script: skip
       deploy: &heroku
         provider: heroku
         app: wcs-api
