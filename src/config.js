@@ -17,11 +17,12 @@ const config = {
   get redirectCallbackUrl() {
     return url.resolve(`${isProduction ? appUrl : `http://localhost:${port}`}`, redirectPath);
   },
-  redirectLoginUrl: redirectToUrl =>
+  redirectLoginUrl: redirectToUrl => {
     url.resolve(
-      `${isProduction ? `https://${client}.herokuapp.com` : `http://localhost:3000`}`,
+      `${isProduction ? `https://${client}.herokuapp.com` : 'http://localhost:3000'}`,
       redirectToUrl || '/login',
-    ),
+    );
+  },
   spotify: {
     clientId,
     clientSecret,

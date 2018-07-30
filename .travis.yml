@@ -7,8 +7,9 @@ before_install:
 
 jobs:
   include:
-    - stage: test
+    - stage: lint
       script: yarn run lint
+    - stage: test
       script: yarn run test
     - if: tag IS present
       stage: deploy to production
