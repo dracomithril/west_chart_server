@@ -75,9 +75,7 @@ module.exports = function SpotifyHandlers() {
       spotifyApi
         .authorizationCodeGrant(code)
         .then(response => {
-          const {
-            body: { expires_in, access_token, refresh_token },
-          } = response;
+          const { body: { expires_in, access_token, refresh_token } } = response;
           winston.info(`The access token expires in ${expires_in}`);
           const cookieObtainCredentialsPath = '/api/spotify/obtain_credentials';
           res.cookie(cookies_name.access_token, access_token, {
@@ -88,7 +86,8 @@ module.exports = function SpotifyHandlers() {
             maxAge: 360000,
             path: cookieObtainCredentialsPath,
           });
-          res.redirect(config.redirectLoginUrl(cookies[cookies_name.from]));
+          const redirectLoginUrl = config.redirectLoginUrl(cookies[cookies_name.from]);
+          res.redirect(redirectLoginUrl);
         })
         .catch(err => {
           winston.error(err);
