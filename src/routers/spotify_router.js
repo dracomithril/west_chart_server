@@ -74,7 +74,7 @@ module.exports = function SpotifyHandlers() {
       // Retrieve an access token and a refresh token
       spotifyApi
         .authorizationCodeGrant(code)
-        .then(response => {
+        .then((response) => {
           const {
             body: { expires_in, access_token, refresh_token },
           } = response;
@@ -91,7 +91,7 @@ module.exports = function SpotifyHandlers() {
           const redirectLoginUrl = config.redirectLoginUrl(cookies[cookies_name.from]);
           res.redirect(redirectLoginUrl);
         })
-        .catch(err => {
+        .catch((err) => {
           winston.error(err);
           res.redirect('/#/error/invalid_token');
         });
@@ -129,7 +129,7 @@ module.exports = function SpotifyHandlers() {
         });
         res.send(access_token);
       })
-      .catch(err => {
+      .catch((err) => {
         winston.error('Could not refresh access token', err);
         res.status(500).send(err);
       });

@@ -44,7 +44,6 @@
     "eslint-plugin-prettier": "^2.6.1",
     "eslint-plugin-react": "^7.10.0",
     "jest": "^23.2.0",
-    "prettier": "^1.11.1",
     "sinon": "^4.4.9"
   },
   "author": "dracomithril",
