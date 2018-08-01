@@ -15,8 +15,9 @@ router.get('/info', (req, res) => {
   };
   winston.debug(serverInfo);
   winston.warn(`text from heroku: ${process.env.TEST_ENV}`);
+  count += 1;
   res.send(
-    `hello world! my version is: ${serverInfo.version} you are ${++count} person. text: ${
+    `hello world! my version is: ${serverInfo.version} you are ${count} person. text: ${
       process.env.TEST_ENV
     } ${JSON.stringify(serverInfo)}`,
   );
