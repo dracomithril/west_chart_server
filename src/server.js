@@ -1,5 +1,5 @@
 /**
- * Created by Gryzli on 24.01.2017.
+ * Created by michal.grezel on 24.01.2017.
  */
 const bodyParser = require('body-parser');
 const compression = require('compression');

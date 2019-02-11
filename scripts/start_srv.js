@@ -1,5 +1,5 @@
 /**
- * Created by Gryzli on 01.04.2017.
+ * Created by michal.grezel on 01.04.2017.
  */
 
 process.env.NODE_ENV='development';
