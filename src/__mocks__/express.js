@@ -1,20 +1,18 @@
-const sinon = require('sinon');
-
 const express = jest.genMockFromModule('express');
 
 const router = {
-  use: sinon.stub(),
-  get: sinon.stub(),
-  put: sinon.stub(),
-  post: sinon.stub(),
+  use: jest.fn(),
+  get: jest.fn(),
+  put: jest.fn(),
+  post: jest.fn(),
 };
 const expressMock = {
-  use: sinon.stub(),
-  get: sinon.stub(),
-  put: sinon.stub(),
-  set: sinon.stub(),
-  engine: sinon.stub(),
-  listen: sinon.stub(),
+  use: jest.fn(),
+  get: jest.fn(),
+  put: jest.fn(),
+  set: jest.fn(),
+  engine: jest.fn(),
+  listen: jest.fn(),
 };
 express.mockImplementation(() => expressMock);
 express.Router.mockImplementation(() => router);

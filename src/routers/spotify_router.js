@@ -1,6 +1,3 @@
-/**
- * Created by michal.grezel on 02.04.2017.
- */
 const Spotify = require('spotify-web-api-node');
 const router = require('express').Router();
 const winston = require('winston');
