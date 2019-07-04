@@ -14,7 +14,7 @@ jobs:
     - if: tag IS present
       stage: deploy to production
       script: skip
-      deploy: &heroku
+      deploy:
         provider: heroku
         app: wcs-api
         api_key:

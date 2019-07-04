@@ -11,25 +11,17 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 [{.babelrc,.stylelintrc,.eslintrc,jest.config,*.json,*.conf,*.jsb3,*.jsb2,*.bowerrc}]
-indent_style=space
 indent_size=2
 
 [*.md]
 trim_trailing_whitespace = false
 
-[*.scss]
-indent_style = space
-indent_size = 2
-
-[{*.js,*.jsx,*.spec.js}]
-indent_style=space
+[{*.js,*.jsx}]
 indent_size=2
 
 
 [*.js.map]
-indent_style=space
 indent_size=2
 
 [{.analysis_options,*.yml,*.yaml}]
-indent_style=space
 indent_size=2
